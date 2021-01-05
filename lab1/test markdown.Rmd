@@ -1,0 +1,37 @@
+---
+title: "Test Markdown (1/5)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The "#" refers to written text. This is my first markdown file.
+## The "#" refers to written text. This is my first markdown file.
+### The "#" refers to written text. This is my first markdown file.
+```{r}
+4*2
+```
+
+## This is my [e-mail](mailto:adkng@ucdavis.edu).
+## This is [Google](http://google.com).
+
+## This is the practice for today, January 5th.
+### This is for arithmetic.
+```{r}
+4*2
+(4/2)*2
+3+18
+mean(2,5,10,15)
+```
+### This is for step 3.
+```{r message=FALSE, warning=FALSE}
+#install.packages("tidyverse")
+library("tidyverse")
+```
+
+```{r}
+ggplot(mtcars, aes(x = factor(cyl))) +
+    geom_bar()
+```
