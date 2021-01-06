@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/adkng/BIS15W2021_ang/blob/main/newrepositoryimage.jpg?raw=true"   width="300" height="200"/><br>
+  <img src="https://github.com/adkng/BIS15W2021_ang/blob/main/newrepositoryimage.jpg?raw=true"   width="300" height="150"/><br>
   <b>Winter Quarter 2021</b>
 </p>
 
