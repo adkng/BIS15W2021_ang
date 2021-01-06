@@ -1,8 +1,3 @@
----
-output: 
-  html_document: 
-    keep_md: yes
----
 # BIS15L: Data Science for Biologists
 ## Student Repository by Adrianna Ng
 ### Winter 2021
