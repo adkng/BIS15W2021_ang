@@ -17,7 +17,11 @@ output:
 ## R and RStudio  
 R is an open source, **scripting** language. RStudio is a [GUI](https://www.computerhope.com/jargon/g/gui.htm) that is used to interact with R. You need to have R installed in order for RStudio to work. On the desktop in your repository's `lab 1` folder, you should see a file titled `lab1_1.Rmd`. Open this file by double clicking; you should now be in RStudio.  
 
-When you first open RStudio, you should see your screen divided into four quadrants. I will demonstrate each of these, but for now it is enough to know that they display different information and are helpful to manage your work.  
+When you first open RStudio, you should see your screen divided into four quadrants. I will demonstrate each of these, but for now it is enough to know that they display different information and are helpful to manage your work.
+
+"R is an opens-source programming language. You just tell it what to do and nothing more...
+Not very pleasing. It is a GUE. We always have the R Console at the bottom of R Studio."
+"This part is your working space."
 
 ## Working Directory  
 Before you begin any project in RStudio, it is important that you are in the correct "working directory". This is the folder on your computer where you are currently working; it is the location where RStudio will save all of your work. At first, most of the problems people encounter are because they are not in the correct working directory.  
@@ -51,10 +55,11 @@ Order of operations applies and you don't need to add an '=' sign.
 Statistics are what R was originally written for and there are thousands of packages for specialized statistics depending on your needs.
 ```{r arithmetic-ex-3}
 mean(4, 6, 8, 5, 6, 7, 7, 7)
+median(4, 6, 8, 5, 6, 7, 7, 7)
 ```
 
 ## RMarkdown  
-Annotation of code is important for programmers of all levels. When code is annotated, it is easy for others to understand and perhaps more importantly, easier for the person who wrote the code to understand when returning to a project days to years later. RMarkdown allows us to embed code in annotated chunks, show the results of analyses, and display graphical output all in one file. It is a great way of making a report which can be conveniently output to html or pdf.  
+Annotation of code is important for programmers of all levels. When code is annotated, it is easy for others to understand and perhaps more importantly, easier for the person who wrote the code to understand when returning to a project days to years later. RMarkdown allows us to embed code in annotated chunks, show the results of analyses, and display graphical output all in one file. It is a great way of making a report which can be conveniently output to html or pdf. 'This is how we make code create a nice, readable report. This is what we did in Lab1_1. You can knit to PDF, Word, and HTML. You can show everyone what exactly you are doing in your code.'
 
 The RMarkdown file can then be exported in a number of formats. If you have questions, the definitive guide to RMarkdown is [here](https://bookdown.org/yihui/rmarkdown/).  
 
