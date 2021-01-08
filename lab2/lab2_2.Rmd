@@ -23,19 +23,25 @@ Please take 5-8 minutes to check over your answers to HW 1 in your group. If you
 5. Select values and use summary functions in a data matrix.  
 
 ## Data Structures
-In addition to classes of data, R also organizes data in different ways. These are called data structures and include vectors, lists, matrices, data frames, and factors. For now, we will focus on `vectors`.  
+In addition to classes of data, R also organizes data in different ways. These are called data structures and include vectors, lists, matrices, data frames, and factors. For now, we will focus on `vectors`.
 
 ## Vectors
-Vectors are a common way of organizing data in R.  We create vectors using the `c` command. The `c` stands for concatenate.  
+Vectors are a common way of organizing data in R.  We create vectors using the `c` command. The `c` stands for concatenate. They are essentially a list of numbers or text. They are also ordered. Make your RMarkdowns as clean as possible, so space your vectors! 
 
 A numeric vector.
 ```{r}
 my_vector <- c(10, 20, 30)
 ```
 
+```{r}
+is.numeric(my_vector)
+```
+
+
 A character vector. Characters always have quotes and may be referred to as "strings".
 ```{r}
 days_of_the_week <- c("Monday", "Tuesday", "Wednesday", "Thrusday", "Friday", "Saturday", "Sunday")
+days_of_the_week
 ```
 
 A convenient trick for creating a vector is to generate a sequence of numbers.
@@ -44,34 +50,51 @@ my_vector_sequence <- c(1:100)
 my_vector_sequence
 ```
 
+```{r}
+my_vector_sequence_extra <- c(1:100, seq = 0.5)
+my_vector_sequence_extra
+```
+
 ## Identifying vector elements
 We can use `[]` to pull out elements in a vector. We just need to specify their position in the vector; i.e. day 3 is Wednesday.
 ```{r}
 days_of_the_week[3]
+days_of_the_week[2]
 ```
+We pulled out the "third element" in the days of the week vector.
+If you pull "8", you get NA because it's not there!
 
 ## Practice
 Work through these examples and make adjustments to the values to experiment.
 
-2. Evaluate all numerics in `my_vector_sequence` to determine which has a value of 15.  
+1. Misnumbered!
+
+2. Evaluate all numerics in `my_vector_sequence` to determine which has a value of 15. **Note: It can't ust be "=" because it would make another object and override the original to just "15'.**  
 ```{r}
+my_vector_sequence==15
+my_vector_sequence[my_vector_sequence == 15]
 
 ```
 
-3. We can use operators such as <, >, ==, <==, etc. Show all values in `my_vector_sequence` that are less than 10.  How about less than or equal to 10?  
+3. We can use operators such as <, >, ==, <==, etc. Show all values in `my_vector_sequence` that are less than 10. How about less than or equal to 10?  
 ```{r}
+
+my_vector_sequence < 10
 
 ```
-
-4. If you use `[]` then you only get the values, not the logical evaluation of the entire vector. Experiment with this by adjusting the chunk below.    
 ```{r}
-my_vector_sequence[my_vector_sequence <= 10]
+my_vector_sequence <= 10
+```
+
+4. If you use `[]` then you only get the values, not the logical evaluation of the entire vector. Experiment with this by adjusting the chunk below. **Note: Logical evaluation means TRUE/FALSE!**    
+```{r}
+yet_another_vector <- my_vector_sequence[my_vector_sequence <= 15]
 ```
 
 ## Data Matrices
 Data matrices are a series of stacked vectors, similar to a data table. In the example below, we build a new data matrix using the matrix command.  
 
-Box office earnings for Harry Potter movies (in millions!). Notice that these are separate vectors.  
+Box office earnings for Harry Potter movies (in millions!). Notice that these are separate vectors for earnings in dollars (US versus INTL).  
 ```{r}
 Philosophers_Stone <- c(317.5, 657.1)
 Chamber_of_Secrets <- c(261.9, 616.9)
@@ -90,10 +113,22 @@ box_office
 ```
 
 Create `harry_potter_matrix` using the `matrix()` command. We need to tell R how to organize the `box_office` vector using the `nrow` and `byrow` commands.
+
+First, creating new object called harry_potter_matrix. In the matrix command, we want it to be arranged by row. So, there will be 8 different rows in the data matrix. You have to tell R how many rows you want there to be. The brackets are calling specific points in our vector. [1, _] is our first value in the first row. [_,1] is our first value in the column. Does not organize by columns (so, no ncol command).
+
 ```{r}
 harry_potter_matrix <- matrix(box_office, nrow = 8, byrow = T)
 harry_potter_matrix
 ```
+
+What if we changed row numbers?
+```{r}
+harry_potter_matrix <- matrix(box_office, nrow = 4, byrow = T)
+harry_potter_matrix
+```
+Without specifying, it will just give you as many rows as there are numbers. 
+
+
 ## Name the rows and columns
 Vectors `region` and `titles`, used for naming.
 ```{r}
@@ -109,6 +144,7 @@ titles
 Name the columns using `colnames()` with the vector region.
 ```{r}
 colnames(harry_potter_matrix) <- region
+harry_potter_matrix
 ```
 
 Name the rows using `rownames()` with the vector titles.
@@ -128,21 +164,24 @@ global <- rowSums(harry_potter_matrix)
 global
 ```
 
-And even add a new column to reflect this calculation. `cbind()` adds columns.
+And even add a new column to reflect this calculation. `cbind()` adds columns. 'rbind()' adds rows.
 ```{r}
 all_harry_potter_matrix <- cbind(harry_potter_matrix, global)
 all_harry_potter_matrix
 ```
 
+
 ## Practice
 1. What are the total earnings for the US and non-US regions?  
 ```{r}
-
+total_earnings <- colSums(all_harry_potter_matrix)
+total_earnings
 ```
 
 2. Add this information to the data matrix. Hint: you are adding a row, not a column.  
 ```{r}
-
+all_harry_potter_matrix_2 <- rbind(all_harry_potter_matrix, total_earnings)
+all_harry_potter_matrix_2
 ```
 
 ## A few Extras
