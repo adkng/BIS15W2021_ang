@@ -24,8 +24,12 @@ output:
 library("tidyverse")
 ```
 
+The library command "calls" the tidyverse -- it picks up the package and puts it into the computer's memory. The functions of the tidyverse are now available to use.
+
 ## Data Frames
-During lab 2, you learned how to work with vectors and data matrices. Today we will organize the vectors into a new type of data structure called a **data frame**. The data frame is the most common way to organize data within R. You can think of a data frame as similar to a spreadsheet. A data frame can store data of many different classes.  
+During lab 2, you learned how to work with vectors and data matrices. Today we will organize the vectors into a new type of data structure called a **data frame**. The data frame is the most common way to organize data within R. You can think of a data frame as similar to a spreadsheet. A data frame can store data of many different classes. 
+
+Spreadsheets can hold lots of different kinds of data. When you think of data matrices, they are often restricted to data of a certain class... but data frames are not! There are some uses of data matrices and vectors, but data frames are by **far** the best way to work with data here.
 
 Let's build separate vectors that include length (in), weight (oz), and sex of three [ruby-throated hummingbirds](https://www.audubon.org/field-guide/bird/ruby-throated-hummingbird).  
 ```{r}
@@ -34,11 +38,14 @@ Length <- c(3.2, 3.7, 3.4)
 Weight <- c(2.9, 4.0, 3.1)
 ```
 
-Here we combine our three vectors to create a data frame with the function `data.frame()`.
+Equal length vectors.
+
+Here we combine our three vectors to create a data frame with the function `data.frame()`. This command (unlike the matrix command) assembles the data into a data frame and can be stored as an object.
 ```{r}
 hbirds <- data.frame(Sex, Length, Weight)
 hbirds
 ```
+Different from a data matrix, right? The variables (sex, length, and weight) are all columns and then the columns based on their class of data. The 'sex' is a character, but 'length' and 'weight' is a double-precision floating number. 
 
 OK, stop and think- how does this differ from making a data matrix? Are the data treated differently?  
 ```{r}
@@ -47,23 +54,32 @@ hummingbirds_matrix <- matrix(hummingbirds, nrow=3, byrow = T)
 hummingbirds_matrix
 ```
 
+The data matrix orientation is as a series of "stacked vectors". The first vector is sex, then weight, then length... this is not a data frame! A data frame has columns with its **own** variable.
+
 Notice that not only are the data neat and clean looking, there is also information provided about the class of data. `dbl` means that the value is a type of numeric [double precision floating point](http://uc-r.github.io/integer_double/). 
+
+Sometimes, we can forget the names of our columns in our data frames... use the "names" command to retrieve them.
 
 What are the column names of our data frame? Notice that R defaulted to using the names of our vectors, but we could name them something else when creating the data frame, or rename them later.
 ```{r}
 names(hbirds)
 ```
+This outputs the column names.
 
 What are the dimensions of the `hbirds` data frame? The `dim()` and `str()` commands provide this information.   
 ```{r}
 dim(hbirds)
 ```
+This stands for "dimensions" -- we get 3 x 3 and is visible in the environment panel as well. There are three observations for three variables.
 
 ```{r}
 str(hbirds)
 ```
+This is commonly used by R programmers as well. This tells you the different variables, what class they are, and brief output of what the observations are. This is good to get an overall sense of what is in the data frame. You can also look at the data frame from the global environment (and it is sortable)!
 
-Let's use lowercase names when we create the data frame. We just changed to lowercase here, but we could use any names we wish.  
+Let's use lowercase names when we create the data frame. We just changed to lowercase here, but we could use any names we wish. We should be visualizing what we want to do with data after collection in R... so we should try to stick to naming conventions that make it easier. So, get good at renaming columns so they can be easily called. To call a variable, we have to know the name **exactly** as it is.
+
+With this command, we are renaming. First, we state how we want the column to be named. Then, you give the column name as it is now. So "sex" will rename the the "Sex" column and "length_in" will rename the "Length" column.
 ```{r}
 hbirds <- data.frame(sex = Sex, length_in = Length, weight_oz = Weight) #renaming will become more helpful in later labs
 names(hbirds)
@@ -72,9 +88,10 @@ names(hbirds)
 ```{r}
 hbirds
 ```
+Look! New names!
 
 ## Accessing Data Frame Columns and Rows 
-The same methods of selecting elements in vectors and data matrices apply to data frames. We use `[]`. We have two positions where the first applies to the rows, and the second to the columns.  
+The same methods of selecting elements in vectors and data matrices apply to data frames. We use `[]`. We have two positions where the **first applies to the rows**, and the **second to the columns**.  
 
 The first row.  
 ```{r}
@@ -86,36 +103,59 @@ The third column.
 hbirds[ ,3]
 ```
 
-We can also select values in an entire column using the `$` sign. This can be useful for calculations. Here we calculate the mean of all of the birds weights. 
+We can also select values in an entire column using the `$` sign. This can be useful for calculations. Here we calculate the mean of all of the birds weights. We are giving the object w all the values from the weight_oz column (2.9, 4.0, and 3.1). Now that we have the object with these values, we can do calculations with it! 
 ```{r}
 w <- hbirds$weight_oz
 mean(w)
 ```
+This is a really nice way to call out certain columns in our data frame.
 
 ## Adding Rows
-We can add a new bird's data with the `rbind()` function, known as row bind. It will bind our new vector to our data frame row-wise.
+We can add a new bird's data with the `rbind()` function, known as row bind. It will bind our new vector to our data frame **row-wise**.
 ```{r}
 new_bird <- c("Female", 3.6, 3.9)
 new_bird
 ```
 
+To make this work, have to indicate: 'rbind()', where I am going to bind it, and what I am adding to it. once that is done, it gets added at the bottom!
 ```{r}
 hbirds<- rbind(hbirds, new_bird)
 hbirds
 ```
 
 ## Adding Columns
-What if we come across more data and we want to add it to our data frame? We can also do that with the `$` operator.
+We can add new columns via the 'cbind()' function.
+```{r}
+neighborhood <- c("Lakewood", "Brentwood", "Lakewood", "Scenic Heights")
+neighborhood
+hbirds <- cbind(hbirds, neighborhood)
+hbirds
+```
+
+To make sure that we have added the columns correctly, we can check the dimensions of the data frame.
+```{r}
+dim(hbirds)
+```
+
+What if we come across more data and we want to add it to our data frame more quickly/cleanly? We can also do that with the `$` operator.
 ```{r}
 hbirds$neighborhood <- c("Lakewood", "Brentwood", "Lakewood", "Scenic Heights")
 hbirds
 ```
 
 ## Writing Data to File
-We should save our hbirds data frame so we can use it again later! There are many ways to save data in R, here we write our data frame to a csv file. We use  `row.names = FALSE` to avoid row numbers from printing out. 
+We should save our hbirds data frame so we can use it again later! There are many ways to save data in R, here we write our data frame to a csv file. We use csv because they are more flexible than Excel spreadsheets. We use  `row.names = FALSE` to avoid row numbers from printing out that would give weird results. 
 ```{r}
-write.csv(hbirds, "hbirds_data.csv", row.names = FALSE)
+write.csv(hbirds, "data/hbirds_data.csv", row.names = FALSE)
 ```
+Here, we used the 'write.csv()' command. First, you put the name of the data frame you want to use, then you enter the file name you want to give it.
+
+Where did it go? Use the command for your working directory!
+```{r}
+getwd()
+```
+But... how do I save it into the data folder? Go back to the title and provide a path... here we said "data/" to put it in the data folder. Keep it neat and tidy in R!
+
 
 ## Practice
 Below are data collected by three scientists (Jill, Steve, Susan in order) measuring temperatures of three hot springs near Mono Lake.
@@ -127,27 +167,60 @@ spring <- c("Buckeye", "Buckeye", "Buckeye", "Benton", "Benton", "Benton", "Trav
 
 1. Build a data frame called `hsprings` with the above data. Name the temperature column `temp_C`. Print out the data frame.  
 ```{r}
+hsprings <- data.frame(temp_C = temp, name, spring)
+hsprings
+```
 
+**Alternatively...**
+```{r}
+hsprings_ledford <- data.frame(temp, name, spring)
+```
+If you want to change the order of these... just reorder it in the function!
+```{r}
+hsprings_ledford <- data.frame(name, spring, temp_C = temp)
+hsprings_ledford
 ```
 
 2. Change the column titled `name` to `scientist`, leave the other column names the same. Print out the data frame names.  
 ```{r}
+hsprings <- data.frame(temp_C = temp, scientist = name, spring)
+names(hsprings)
+```
 
+```{r}
+hsprings_ledford <- data.frame(scientist = name, spring, temp_C = temp)
+hsprings_ledford
 ```
 
 3. Our scientists forgot to record the depth data for each spring. Here it is as a vector, add it as a new column called depth_ft: `c(4.15, 4.13, 4.12, 3.21, 3.23, 3.20, 5.67, 5.65, 5.66)`. Print out the data frame.
 ```{r}
-
+hsprings$depth_ft <- c(4.15, 4.13, 4.12, 3.21, 3.23, 3.20, 5.67, 5.65, 5.66)
+hsprings
 ```
+**Alternatively...**
+```{r}
+depth_ft <- c(4.15, 4.13, 4.12, 3.21, 3.23, 3.20, 5.67, 5.65, 5.66)
+hsprings_ledford <- cbind(hsprings_ledford, depth_ft)
+hsprings_ledford
+```
+
 
 4. Calculate the mean temperature of all of the temperature measurements.
 ```{r}
+mean_temp <- hsprings$temp_C
+mean(mean_temp)
+```
 
+**Alternatively...**
+```{r}
+x <- hsprings_ledford[ , 3]
+mean(x)
 ```
 
 5. Save your hot springs data as a `.csv` file! Do not allow row names. 
 ```{r}
-
+write.csv(hsprings, "data/hsprings_data.csv", row.names = FALSE)
+write.csv(hsprings_ledford, "data/hsprings_ledford_data.csv", row.names = FALSE)
 ```
 
 ## That's it! Take a break and I will see you on Zoom!  
