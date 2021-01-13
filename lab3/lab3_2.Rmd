@@ -27,9 +27,13 @@ At this point, you should have familiarity in RStudio, GitHub, and basic operati
 ```{r message=FALSE, warning=FALSE}
 library("tidyverse")
 ```
+We have just called the tidyverse.
+
 
 ## Data Frames
-For the remainder of the course, we will work exclusively with data frames. Recall that data frames store multiple classes of data. Last time, you were shown how to build data frames using the `data.frame()` command. However, scientists often make their data available as supplementary material associated with a publication. This is excellent scientific practice as it insures repeatability by showing exactly how analyses were performed. As data scientists, we capitalize on this by importing data directly into R.  
+For the remainder of the course, we will work exclusively with data frames. Recall that data frames store multiple classes of data. Last time, you were shown how to build data frames using the `data.frame()` command. However, scientists often make their data available as supplementary material associated with a publication. This is excellent scientific practice as it insures repeatability by showing exactly how analyses were performed. As data scientists, we capitalize on this by importing data directly into R.
+
+Imagine you wanted to look at someone else's data... R has no problem reading Excel formats! Most of Excel is related to aesthetics. However, "csv" is able to be read by many programs and plays a lot nicer with R. If you want to turn a spreadsheet in Excel into something usable for R: File > Save As > CSV.
 
 ## Importing Data
 R allows us to import a wide variety of data types. The most common type of file is a .csv file which stands for comma separated values. Spreadsheets are often developed in Excel then saved as .csv files for use in R. There are packages that allow you to open excel files and many other formats directly but .csv is the most common.  
@@ -41,18 +45,32 @@ To import any file, first make sure that you are in the correct working director
 getwd()
 ```
 
+What if you want to change it?
+Session > Set Working Directory > Choose working directory > Open
+Setwd()
+
+
 ## Load the data
-Here we open a .csv file. Since we are using the tidyverse, we open the file using `read_csv()`. `readr` is included in the tidyverse set of packages. We specify the package and function with the `::` symbol. This becomes important if you have multiple packages loaded that contain functions with the same name.  
+Here we open a .csv file. Since we are using the tidyverse, we open the file using `read_csv()`. `readr` is included in the tidyverse set of packages. We specify the package and function with the `::` symbol. This becomes important if you have multiple packages loaded that contain functions with the same name. There is `read.csv.`, but it's older and we won't use it honestly.  
 
 In the previous part of the lab, you exported a `.csv` of hot springs data. Let's try to reload that `.csv`.  
 ```{r}
 hot_springs <- readr::read_csv("hsprings_data.csv")
 ```
+This will also let you know if there are any errors in your import.
 
 Use the `str()` function to get an idea of the data structure of `hot_springs`.  
 ```{r}
 str(hot_springs)
 ```
+
+**Alternatively,**
+```{r}
+glimpse(hot_springs)
+```
+Remember, the <carats> indicate the class of data. For example, <dbl> is a double floating point number.
+
+We don't want each instance of scientist to be treated differently... so let's change the class of scientist!
 
 What is the class of the scientist column? Change it to factor and then show the levels of that factor.  
 ```{r}
@@ -68,109 +86,140 @@ class(hot_springs$scientist)
 levels(hot_springs$scientist)
 ```
 
+What is the difference between a character and a factor?
+A `character` is... a string of characters. '1' and '7'.
+A `factor` is... in possession of specific levels. '17'.
+
 ## Practice
 1. In your lab 3 folder there is another folder titled `data`. Inside the `data` folder there is a `.csv` titled `Gaeta_etal_CLC_data.csv`. Open this data and store them as an object called `fish`.  
 
 The data are from: Gaeta J., G. Sass, S. Carpenter. 2012. Biocomplexity at North Temperate Lakes LTER: Coordinated Field Studies: Large Mouth Bass Growth 2006. Environmental Data Initiative.  [link](https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=267)  
 ```{r}
 
+fish <- readr::read_csv("data/Gaeta_etal_CLC_data.csv")
+
 ```
 
 2. What is the structure of these data?
 ```{r}
-
+glimpse(fish)
+```
+```{r}
+names(fish)
 ```
 
-Notice that when the data are imported, you are presented with a message that tells you how R interpreted the column classes. This is also where error messages will appear if there are problems.  
+
+**Fun fact:** If you want to remove a certain object from the global environment, then just use the `rm()` function.
+```{r}
+rm(fish)
+```
+
+
+Notice that when the data are imported, you are presented with a message that tells you how R interpreted the column classes. This is also where error messages will appear if there are problems.
 
 ## Summary functions
 Once data have been uploaded, you may want to get an idea of its structure, contents, and dimensions. I routinely run one or more of these commands when data are first imported.  
 
 We can summarize our data frame with the`summary()` function.  
 ```{r}
-#summary(fish)
+summary(fish)
 ```
 
 `glimpse()` is another useful summary function.
 ```{r}
-#glimpse(fish)
+glimpse(fish)
 ```
 
 `nrow()` gives the numbers of rows.
 ```{r}
-#nrow(fish) #the number of rows or observations
+nrow(fish) #the number of rows or observations
 ```
 
 `ncol` gives the number of columns.
 ```{r}
-#ncol(fish) #the number of columns or variables
+ncol(fish) #the number of columns or variables
 ```
 
 `dim()` gives the dimensions.
 ```{r}
-#dim(fish) #total dimensions
+dim(fish) #total dimensions
 ```
 
 `names` gives the column names.
 ```{r}
-#names(fish) #column names
+names(fish) #column names
 ```
 
 `head()` prints the first n rows of the data frame.
 ```{r}
-#head(fish, n = 10)
+head(fish, n = 10)
 ```
 
 `tail()` prinst the last n rows of the data frame.
 ```{r}
-#tail(fish, n = 10)
+tail(fish, n = 10)
 ```
 
 `table()` is useful when you have a limited number of categorical variables. It produces fast counts of the number of observations in a variable. We will come back to this later... 
 ```{r}
-#table(fish$lakeid)
+table(fish$lakeid)
 ```
+Here is the number of observations for each lake ID.
 
-We can also click on the `fish` data frame in the Environment tab or type View(fish).
 ```{r}
-#View(fish)
+table(fish$length)
+```
+Continuous variables give you a weird output... works best for categorical/discrete things.
+
+
+We can also click on the `fish` data frame in the Environment tab or type View(fish). This brings up a spreadsheet.
+```{r}
+View(fish)
 ```
 
 ## Subset
-Subset is a way of pulling out observations that meet specific criteria in a variable.  
+Subset is a way of pulling out observations that meet specific criteria in a variable. For example, what if we wanted to see fish with tails less than 100.  
 ```{r}
-#little_fish <- subset(fish, length<=100)
-#little_fish
+little_fish <- subset(fish, length<=100) #creates the subset, see environment! is another df
+little_fish
 ```
 
 ## Practice
 1. Load the data `mammal_lifehistories_v2.csv` and place it into a new object called `mammals`.
 ```{r}
-
+mammals <- readr::read_csv("data/mammal_lifehistories_v2.csv")
 ```
 
 2. Provide the dimensions of the data frame.
 ```{r}
-
+dim(mammals)
 ```
 
 3. Check the column names in the data frame. 
 ```{r}
-
+names(mammals)
 ```
 
 4. Use `str()` to show the structure of the data frame and its individual columns; compare this to `glimpse()`. 
 ```{r}
-
+str(mammals)
 ```
 
 ```{r}
-
+glimpse(mammals)
 ```
 
 5. . Try the `table()` command to produce counts of mammal order, family, and genus.  
 ```{r}
+table(mammals$order)
+```
+```{r}
+table(mammals$family)
+```
 
+
+```{r}
+table(mammals$Genus)
 ```
 
 ## Wrap-up
