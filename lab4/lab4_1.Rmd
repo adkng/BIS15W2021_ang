@@ -1,0 +1,271 @@
+---
+title: "Transforming data 1: Dplyr `select()`"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+    keep_md: yes
+  pdf_document:
+    toc: yes
+---
+
+## Learning Goals
+*At the end of this exercise, you will be able to:*    
+1. Use summary functions to assess the structure of a data frame.  
+2. Us the select function of `dplyr` to build data frames restricted to variable of interest.  
+3. Use the `rename()` function to provide new, consistent names to variables in data frames.  
+
+## Review
+At this point, you should have familiarity in RStudio, GitHub, and basic operations in R. If you need extra help, please [email me](mailto: jmledford@ucdavis.edu).  
+
+## Load the tidyverse
+For the remainder of the quarter, we will work within the `tidyverse`. At the start of each lab, the library needs to be called as shown below.  
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+```
+
+## Load the data
+These data are from: Gaeta J., G. Sass, S. Carpenter. 2012. Biocomplexity at North Temperate Lakes LTER: Coordinated Field Studies: Large Mouth Bass Growth 2006. Environmental Data Initiative.  [link](https://portal.edirepository.org/nis/mapbrowse?scope=knb-lter-ntl&identifier=267)  
+```{r}
+fish <- readr::read_csv("data/Gaeta_etal_CLC_data.csv")
+```
+
+## Data Structure
+Once data have been uploaded, let's get an idea of its structure, contents, and dimensions.  
+```{r}
+glimpse(fish)
+```
+Clean summary!
+```{r}
+str(fish)
+```
+```{r}
+summary(fish)
+```
+A more statistical output. Remember though, it treats NAs in a way that is misleading... so don't trust the mean!
+```{r}
+names(fish)
+```
+This gives us the names of the variables. This gives us an idea of how the 6 variables are named. Remember, to call them, spell them **exactly**.
+
+## Tidyverse
+The [tidyverse](www.tidyverse.org) is an "opinionated" collection of packages that make workflow in R easier. The packages operate more intuitively than base R commands and share a common organizational philosophy.  
+![*Data Science Workflow in the Tidyverse.*](tidy-1.png)  
+We have sort of learned how to code in base R, which is not terribly intuitive. Tidyverse unifies the structure and overall philosophy of working with things in R, such that things are more intuitive! However, there is a specific organizational philosophy...
+
+Every **variable** has its own **column**. Every **observation** has its own **row**.
+
+
+## dplyr
+The first package that we will use that is part of the tidyverse is `dplyr`. `dplyr` is used to transform data frames by extracting, rearranging, and summarizing data such that they are focused on or fit a question of interest. This is very helpful, especially when wrangling large data, and makes dplyr one of most frequently used packages in the tidyverse. It is also helpful to zoom in on a subset of data to focus on your question of interest. With Rmarkdown, you can create very clean reports to others. The two functions we will use most are `select()` and `filter()`.  
+
+## `select()`
+Select allows you to pull out **columns** of interest from a dataframe. This means it works with the **variables**. To do this, just add the names of the columns to the `select()` command. The order in which you add them, will determine the order in which they appear in the output.
+```{r}
+names(fish)
+```
+
+We are only interested in lakeid and scalelength.
+```{r}
+select(fish, "lakeid", "scalelength") #Function > name of data frame > variables as characters.
+```
+This gives you a dataframe with only the lakeid, scalelength variables. We have refocused it to only be about these two variables of interest.
+
+To add a range of columns use `start_col:end_col`.
+```{r}
+fish
+```
+
+```{r}
+select(fish, fish_id:length)
+```
+We are only interested in the variables between fish_id to length. Instead of 6 variables, you have 3!
+
+
+The - operator is useful in select. It allows us to select everything **except the specified variables**.
+```{r}
+select(fish, -fish_id, -annnumber, -length, -radii_length_mm) # don't want to see fish_id, annumber, length, or radii_length
+```
+
+For very large data frames with lots of variables, `select()` utilizes lots of different operators to make things easier. Let's say we are only interested in the variables that deal with **length**. For example, head length, tail length, fin length, etc. If we only want to see the columns containing length...
+
+```{r}
+names(fish)
+```
+We can see that there are 3 variables pertaining to length.
+
+```{r}
+select(fish, contains("length")) # notice the `contains()` function!
+```
+Look! There they are!
+
+When columns are sequentially named, `starts_with()` makes selecting columns easier. (Sequentially means like radii_1, radii_2, radii_3... etc.)
+```{r}
+select(fish, starts_with("radii"))
+```
+
+Options to select columns based on a specific criteria include:  
+1. ends_with() = Select columns that end with a character string  
+2. contains() = Select columns that contain a character string  
+3. matches() = Select columns that match a regular expression  
+4. one_of() = Select columns names that are from a group of names  
+
+```{r}
+names(fish)
+```
+
+```{r}
+select(fish, ends_with("id"))
+```
+```{r}
+select(fish, contains("fish"))
+```
+
+We won't cover [regex](https://en.wikipedia.org/wiki/Regular_expression) in this class, but the following code is helpful when you know that a column contains a letter (in this case "a") followed by a subsequent string (in this case "er").  
+```{r}
+select(fish, matches("a.+er"))
+```
+
+You can also select **columns** based on the **class** of data.  
+```{r}
+glimpse(fish)
+```
+Anything with <dbl> is a numeric, so...
+
+```{r}
+select_if(fish, is.numeric)
+```
+`select_if()` helps pick based on a class.
+
+To select all columns that are **not** a class of data, you need to add a `~`.
+```{r}
+select_if(fish, ~!is.numeric(.))
+```
+We only got columns with no numerics.
+
+## Practice  
+For this exercise we will use life history data for mammals. The [data](http://esapubs.org/archive/ecol/E084/093/) are from:  
+**S. K. Morgan Ernest. 2003. Life history characteristics of placental non-volant mammals. Ecology 84:3402.**  
+```{r}
+mammals <- readr::read_csv("data/mammal_lifehistories_v2.csv")
+```
+
+1. Use one or more of your favorite functions to assess the structure of the data.  
+```{r}
+names(mammals)
+```
+
+```{r}
+glimpse(mammals)
+```
+
+```{r}
+str(mammals)
+```
+
+2. Are there any NAs? Are you sure? Try taking an average of `max. life` as a test. 
+**My work**
+```{r}
+anyNA(mammals$'max. life')
+```
+```{r}
+mean(max_life)
+```
+
+**Ledford work**
+```{r}
+anyNA(mammals)
+```
+People often times record NAs in lots of different ways... It is really uncommon that there are not any NAs at all.. so the `FALSE` is quite misleading! Let's think about one of the variables that might have `NA` data: the maximum life span column. We don't know the lifespan of all mammals, so there is probably missing data.
+```{r}
+x <- mammals[ 11]
+x
+```
+```{r}
+colMeans(x)
+```
+Clearly, the maximum lifespan of an animal cannot be negative... so what is the problem? Look at the data... there are -999 entries! NAs tend to be recorded as some very weird value (like -999)... the problem is that R does not interpret this as an NA, but a value (like it should).
+```{r}
+summary(mammals)
+```
+Look! The maximum life column and litter size have weird numbers too.. this is why be **careful** with NAs and the `summary()` function. **Never** record NAs as any type of value because we can deal with blanks!
+
+3. What are the names of the columns in the `mammals` data?
+**My work**
+```{r}
+names(mammals)
+```
+
+4. Rename any columns that have capitol letters or punctuation issues.
+**My work**
+```{r}
+mammals <- rename(mammals, "afr" = AFR, "max life" = 'max. life', "genus" = Genus, "litters per year" = 'litters/year')
+names(mammals)
+```
+**Ledford's work**
+```{r}
+new_mammals <- rename(mammals, genus = "Genus", wean_mass = "wean mass", max_life = "max. life", litter_size = "litter size", litters_per_year = "litters/year")
+names(new_mammals)
+```
+
+5. We are only interested in the variables `genus`, `species`, and `mass`. Use `select()` to build a new dataframe `mass` focused on these variables.
+**My work**
+```{r}
+mass <- data.frame(select(new_mammals, "genus", "species", "mass"))
+mass
+```
+**Ledford's work**
+```{r}
+mass <- select(new_mammals, "genus", "species", "mass")
+mass
+```
+If you don't like the order... change it by reordering the columns!
+```{r}
+mass <- select(new_mammals, "species", "genus", "mass")
+mass
+```
+
+6. What if we only wanted to exclude `order` and `family`? Use the `-` operator to make the code efficient.
+**My work**
+```{r}
+select(mammals, -"order", -"family")
+```
+
+7. Select the columns that include "mass" as part of the name. 
+**My work**
+```{r}
+select(mammals, contains("mass"))
+```
+
+8. Select all of the columns that are of class `character`.
+**My work**
+```{r}
+select_if(new_mammals, ~is.character(.)) # remember ~ means across the entire thing, the "." is so it searches across all cells
+```
+
+## Other
+Here are two examples of code that are super helpful to have in your bag of tricks.  
+
+Imported data frames often have a mix of lower and uppercase column names. Use `toupper()` or `tolower()` to fix this issue. I always try to use lowercase to keep things consistent.  
+```{r}
+mammals <- select_all(mammals, tolower)
+mammals
+```
+
+```{r}
+names(mammals)
+```
+
+When naming columns, blank spaces are often added (don't do this, please). Here is a trick to remove these.  
+```{r}
+select_all(mammals, ~str_replace(., " ", ""))
+```
+```{r}
+select_all(mammals, ~str_replace(., "[ ._/]", "" ))
+```
+
+## That's it! Take a break and I will see you on Zoom!  
+
+-->[Home](https://jmledford3115.github.io/datascibiol/)  
