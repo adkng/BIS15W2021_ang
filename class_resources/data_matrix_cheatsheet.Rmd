@@ -1,0 +1,7 @@
+---
+title: "coding cheat sheet for data matrices"
+output: 
+  html_document: 
+    keep_md: yes
+---
+

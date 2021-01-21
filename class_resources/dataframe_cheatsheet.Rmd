@@ -1,0 +1,102 @@
+---
+title: "coding cheat sheet for data frames"
+output: 
+  html_document: 
+    keep_md: yes
+---
+***THINGS TO ASK LEDFORD***
+1. When we get to the midterm, do you want us to answer things using primarily functions from tidyverse/janitor?
+2. Would we get docked off points if we are using R Base Code?
+3. Is identifying vector elements and data matrices something we will utilize anymore in the class?
+
+### Getting Set-Up
+Make sure your workspace is set up. Check your working directory.
+```{r}
+getwd()
+```
+
+Load your libraries, because we shouldn't rely on using R Base Code (although it's not a bad thing).
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+Get your data imported.
+```{r}
+ps4_games <- readr::read_csv("data/PS4_GamesSales.csv")
+xbox_one_games <- readr::read_csv("data/XboxOne_GameSales.csv")
+video_game_sales <- readr::read_csv("data/Video_Games_Sales_as_at_22_Dec_2016.csv")
+```
+See that `<-`? We just told R to "get" the .csv containing our data and store it in the **object** called `ps4_games`.
+
+### Basic Functions
+## Basic Arithmetic
+We have data... cool! Remember the following if you want to do basic arithmetic in R...
+1. R follows PEMDAS, so format your math accordingly.
+2. `+` is for addition, `-` is for subtraction.
+3. `*` is for multiplication, `/` is for divison.
+4. `**` is for exponents.
+5. You can take the `mean()` or `median()` of your data, as long as it is in an object!
+
+### Dataframes
+## Examining Your Data Structure: Dataframes
+Summary functions are a great way to get an idea of data structure, content, and dimensions. *(The following data displays sales in the millions).*
+`summary()`
+```{r}
+summary(ps4_games)
+```
+`glimpse()`
+```{r}
+glimpse(ps4_games)
+```
+`nrow()` gives number of rows.
+```{r}
+nrow(ps4_games)
+```
+`ncol()` gives number of columns.
+```{r}
+ncol(ps4_games)
+```
+`dim()` gives the dimensions.
+```{r}
+dim(ps4_games)
+```
+`names()` gives the column names.
+```{r}
+names(ps4_games)
+```
+`head()` gives the first `n` rows of data.
+```{r}
+head(ps4_games, n = 10)
+```
+`tail()` gives the last `n` rows of data.
+```{r}
+tail(ps4_games, n = 10)
+```
+`view()` is good for viewing data in a more aesthetic tab.
+```{r}
+view(ps4_games)
+```
+`table()` produces fast counts of a number of observations in a variable.
+```{r}
+table(ps4_games$Genre)
+```
+
+
+## Cleaning Your Data: Dataframes
+If your data has... less than ideal column names, clean them up in two ways:
+**Using the Janitor library**
+```{r}
+ps4_games <- janitor::clean_names(ps4_games)
+names(ps4_games)
+```
+
+**Using the `rename()` function**
+```{r}
+names(xbox_one_games)
+xbox_one_games <- rename(xbox_one_games, pos = "Pos", game = "Game", year = "Year", genre = "Genre", publisher = "Publisher", north_america = "North America", japan = "Japan", rest_of_world = "Rest of World", global = "Global")
+names(xbox_one_games)
+```
+
+
+
