@@ -76,6 +76,7 @@ table(ps4_games$Genre)
 
 ## Cleaning Your Data: Dataframes
 If your data has... less than ideal column names, clean them up in two ways:
+
 **Using the Janitor library**
 ```{r}
 ps4_games <- janitor::clean_names(ps4_games)
@@ -85,7 +86,7 @@ names(ps4_games)
 **Using the `rename()` function**
 ```{r}
 names(xbox_one_games)
-xbox_one_games <- rename(xbox_one_games, pos = "Pos", game = "Game", year = "Year", genre = "Genre", publisher = "Publisher", north_america = "North America", japan = "Japan", rest_of_world = "Rest of World", global = "Global")
+xbox_one_games <- rename(xbox_one_games, pos = "Pos", game = "Game", year = "Year", genre = "Genre", publisher = "Publisher", north_america = "North America", europe = "Europe", japan = "Japan", rest_of_world = "Rest of World", global = "Global")
 names(xbox_one_games)
 ```
 
