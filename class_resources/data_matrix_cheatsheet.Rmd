@@ -4,4 +4,10 @@ output:
   html_document: 
     keep_md: yes
 ---
+### Getting Set-Up
+Make sure your workspace is set up. Check your working directory.
+```{r}
+getwd()
+```
 
+### Vectors

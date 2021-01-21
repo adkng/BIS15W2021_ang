@@ -29,15 +29,6 @@ video_game_sales <- readr::read_csv("data/Video_Games_Sales_as_at_22_Dec_2016.cs
 ```
 See that `<-`? We just told R to "get" the .csv containing our data and store it in the **object** called `ps4_games`.
 
-### Basic Functions
-## Basic Arithmetic
-We have data... cool! Remember the following if you want to do basic arithmetic in R...
-1. R follows PEMDAS, so format your math accordingly.
-2. `+` is for addition, `-` is for subtraction.
-3. `*` is for multiplication, `/` is for divison.
-4. `**` is for exponents.
-5. You can take the `mean()` or `median()` of your data, as long as it is in an object!
-
 ### Dataframes
 ## Examining Your Data Structure: Dataframes
 Summary functions are a great way to get an idea of data structure, content, and dimensions. *(The following data displays sales in the millions).*

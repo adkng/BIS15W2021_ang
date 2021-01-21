@@ -1,0 +1,52 @@
+---
+title: "basic r cheatsheet"
+output: html_document
+---
+
+### Base R
+We probably aren't going to come back to it now that we use things like the tidyverse, but it's still good to know. However, there are still important concepts!
+
+## Basic Arithmetic
+We have data... cool! Remember the following if you want to do basic arithmetic in R...
+1. R follows PEMDAS, so format your math accordingly.
+2. `+` is for addition, `-` is for subtraction.
+3. `*` is for multiplication, `/` is for divison.
+4. `**` is for exponents.
+5. You can take the `mean()` or `median()` of your data, as long as it is in an object!
+
+### Types of Data
+## Classes
+These are the main five `classes` of data in R.
+```{r}
+my_numeric <- 42
+my_integer <- 2L
+my_character <- "universe"
+my_logical <- FALSE
+my_complex <- 2+4i
+```
+
+If you don't know the type of class your data falls under, just use the `class()` function. It will return the class type.
+You can use the `is()` function to clarify what type of class type your data is -- this returns a `TRUE` or `FALSE`.
+```{r}
+is.integer(my_character)
+```
+```{r}
+is.integer(my_integer)
+```
+
+The `as()` function is good for specifying your data from one class to another.
+```{r}
+my_integer <- as.integer(my_numeric)
+```
+
+## Missing Data
+When you are missing data, R designates it as the NA. There are two ways to find out if and where NAs are in your data.
+The `is.na` function is useful for a simple `TRUE` or `FALSE` about whether NAs exist in your data.
+```{r}
+#is.na(my_data)
+```
+The `anyNA` function is useful in telling you where exactly the NA occurs
+```{r}
+#anyNA(my_data)
+```
+
