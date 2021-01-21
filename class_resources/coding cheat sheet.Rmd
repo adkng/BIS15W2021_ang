@@ -1,28 +1,68 @@
 ---
 title: "coding cheat sheet"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Lab 1: Getting Started
+# Working directory
+```{r}
+getwd()
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# Getting help
+```{r}
+?mean
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+# Arithmetic
+```{r}
+4*12 # multiplication
+4/2 # division
+4 + 2 # addition
+4 - 2 # subtraction
+8**2 # exponential
+```
+R follows the order of operations (PEMDAS).
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Objects
+```{r}
+x <- c(2, 3, 4)
+```
+The object 'x' should show up in your global environment.
+
+# Statistics
+```{r}
+mean()
+median()
+sum()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Lab 2: Objects, Classes, NAs, Vectors, Data Matrices
+# Data types
+```{r}
+my_numeric <- 42
+my_integer <- 2L #adding an L automatically denotes an integer
+my_character <- "universe"
+my_logical <- FALSE
+my_complex <- 2+4i
+```
+
+# Finding data types
+```{r}
+class()
+is.integer() # is my object an integer? returns boolean TRUE/FALSE
+as.integer() # sets your object to class of choice
+
+```
+
+# Missing data
+```{r}
+is.na() # is there an `NA` in my data right now? reutnrs TRUE/FALSE
+anyNA() # shows you where there is an NA in your data
+```
+When executing certain functions, you can exclude the NAs being calculated by writing `na.rm = T`.
+
+
