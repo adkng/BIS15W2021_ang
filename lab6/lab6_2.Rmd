@@ -37,8 +37,9 @@ As biologists, a good question that we may ask is how do the measured variables 
 penguins %>% 
   group_by(island) %>% 
   summarize(mean_body_mass_g=mean(body_mass_g),
-            n=n())
+            n=n()) # tells you # observations
 ```
+Some islands have "NA"... but measured body mass is measured for some individuals! When we use the summary() functions, if there is even ONE NA, you will get an NA. But, you can use `is.na()` to get rid of them, and use `number_NAs()` to find out how many there are.
 
 Why do we have NA here? Do all of these penguins lack data?
 ```{r}
@@ -59,10 +60,23 @@ penguins %>%
 
 What if we are interested in the number of observations (penguins) by species and island?
 ```{r}
+names(penguins)
+```
+
+```{r}
 penguins %>% 
   group_by(island, species) %>% 
   summarize(n=n(), .groups= 'keep')#the .groups argument here just prevents a warning message
 ```
+Here, you get the number of individuals within that species measured! Some islands have more than 1 species of penguin.
+
+Do islands have more than 1 species? The only island that has one species is Torgersen. When you do two variables, keep in mind that if you reverse the order in the function... you get a slightly different results.
+```{r}
+penguins %>% 
+  group_by(species, island) %>% 
+  summarize(n=n(), .groups= 'keep')
+```
+
 
 ## Counts
 Although these summary functions are super helpful, oftentimes we are mostly interested in counts. The [janitor package](https://garthtarr.github.io/meatR/janitor.html) does a lot with counts, but there are also functions that are part of dplyr that are useful.  
@@ -72,6 +86,7 @@ Although these summary functions are super helpful, oftentimes we are mostly int
 penguins %>% 
   count(island, sort = T) #sort=T sorts the column in descending order
 ```
+This is the number of observations per island. If you compare this with summarize...
 
 Compare this with `summarize()` and `group_by()`.
 ```{r}
@@ -79,12 +94,17 @@ penguins %>%
   group_by(island) %>% 
   summarize(n=n())
 ```
+It is the same result! It is basically a combination of `group_by()` and `summarize()`, but is a shorthand way of saying it.
 
 You can also use `count()` across multiple variables.
 ```{r}
 penguins %>% 
-  count(island, species, sort = F)
+  count(island, species, sort = F) %>% 
+  arrange(desc(n)) #you can use the arrange() function here.
 ```
+
+# So, what function **should** you use?
+Well, Ledford really likes `tabyl()`.
 
 For counts, I am starting to prefer `tabyl()`. Lots of options are supported in [tabyl](https://cran.r-project.org/web/packages/janitor/vignettes/tabyls.html)
 ```{r}
@@ -103,18 +123,55 @@ penguins %>%
 ## Practice
 1. Produce a summary of the mean for bill_length_mm, bill_depth_mm, flipper_length_mm, and body_mass_g within Adelie penguins only. Be sure to provide the number of samples.
 ```{r}
+names(penguins)
+penguins %>% 
+  filter(species == "Adelie") %>%
+  filter(!is.na(bill_length_mm) & !is.na(bill_depth_mm) & !is.na(flipper_length_mm) & !is.na(body_mass_g)) %>% 
+  summarize(mean_bill_length = mean(bill_length_mm),
+          mean_bill_depth = mean(bill_depth_mm),
+          mean_flipper_length = mean(flipper_length_mm),
+          mean_body_mass = mean(body_mass_g),
+          samples = n())
+```
+If you are using a filter() across multiple variables, you may lose data! You should deal with them on a smaller, more specific scale. You can be careful by using the `na.rm = T` when you create the summarize.
 
+
+Ledford's work
+```{r}
+penguins %>% 
+  summarize(mean_bill_length_mm = mean(bill_length_mm, na.rm = T))
 ```
 
 2. How does the mean of `bill_length_mm` compare between penguin species?
 ```{r}
-
+penguins %>% 
+  select(species, bill_length_mm) %>% 
+  filter(!is.na(bill_length_mm)) %>% 
+  group_by(species) %>% 
+  summarize(mean_bill_length = mean(bill_length_mm))
 ```
+
+Ledford's work
+```{r}
+penguins %>% 
+  group_by(species) %>%
+  summarize(mean_bill_length_mm = mean(bill_length_mm, na.rm = T))
+```
+
 
 3. For some penguins, their sex is listed as NA. Where do these penguins occur?
 ```{r}
+names(penguins)
+penguins %>% 
+  group_by(species, island) %>% 
+  summarize(number_NAs=sum(is.na(sex)))
+```
+
+Ledford's work
+```{r}
 
 ```
+
 
 ## `across()`
 Last time we had some great questions on how to use `filter()` and `select()` across multiple variables. There is a new function in dplyr called `across()` which is designed to work across multiple variables. Have a look at Rebecca Barter's awesome blog [here](http://www.rebeccabarter.com/blog/2020-07-09-across/) as I am following her below.  
@@ -127,10 +184,11 @@ penguins %>%
             distinct_sex = n_distinct(sex))
 ```
 
+
 By using `across()` we can reduce the clutter and make things cleaner. 
 ```{r}
 penguins %>%
-  summarize(across(c(species, island, sex), n_distinct))
+  summarize(across(c(species, island, sex), n_distinct)) #c() is the columns you want it to run through.. "summarize across the combination of species, island, and sex with the following function"
 ```
 
 This is very helpful for continuous variables.
@@ -143,10 +201,10 @@ penguins %>%
 ```{r}
 penguins %>%
   group_by(sex) %>% 
-  summarize(across(contains("mm"), mean, na.rm=T))
+  summarize(across(contains("mm"), mean, na.rm=T)) # summarize across any column that contains "MM" using the mean function while removing the NA data
 ```
 
-Here we summarize across all variables.
+Here we summarize across all variables. Without summarize_all, we would have to type allll the columns out.. yikes!
 ```{r}
 penguins %>%
   summarise_all(n_distinct)
@@ -167,8 +225,20 @@ penguins %>%
 
 ## Practice
 1. Produce separate summaries of the mean and standard deviation for bill_length_mm, bill_depth_mm, and flipper_length_mm for each penguin species. Be sure to provide the number of samples.  
-```{r}
 
+Take the mean first.
+```{r}
+penguins %>%
+  group_by(species) %>% 
+  summarize(across(contains("mm"), mean, na.rm = TRUE),
+            n_samples = n())
+```
+
+```{r}
+penguins %>%
+  group_by(species) %>% 
+  summarize(across(contains("mm"), sd, na.rm = TRUE),
+            n_samples = n())
 ```
 
 

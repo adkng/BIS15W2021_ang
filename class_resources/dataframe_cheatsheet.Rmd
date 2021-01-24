@@ -4,12 +4,7 @@ output:
   html_document: 
     keep_md: yes
 ---
-***THINGS TO ASK LEDFORD***
-1. When we get to the midterm, do you want us to answer things using primarily functions from tidyverse/janitor?
-2. Would we get docked off points if we are using R Base Code?
-3. Is identifying vector elements and data matrices something we will utilize anymore in the class?
-
-### Getting Set-Up
+# Getting Set-Up
 Make sure your workspace is set up. Check your working directory.
 ```{r}
 getwd()
@@ -18,7 +13,10 @@ getwd()
 Load your libraries, because we shouldn't rely on using R Base Code (although it's not a bad thing).
 ```{r}
 library(tidyverse)
+library(dplyr)
 library(janitor)
+library(skimr)
+library(dataMaid)
 ```
 
 Get your data imported.
@@ -26,11 +24,12 @@ Get your data imported.
 ps4_games <- readr::read_csv("data/PS4_GamesSales.csv")
 xbox_one_games <- readr::read_csv("data/XboxOne_GameSales.csv")
 video_game_sales <- readr::read_csv("data/Video_Games_Sales_as_at_22_Dec_2016.csv")
+msleep
 ```
 See that `<-`? We just told R to "get" the .csv containing our data and store it in the **object** called `ps4_games`.
 
-### Dataframes
-## Examining Your Data Structure: Dataframes
+# Dataframes
+## Examining Your Data Frame
 Summary functions are a great way to get an idea of data structure, content, and dimensions. *(The following data displays sales in the millions).*
 `summary()`
 ```{r}
@@ -82,6 +81,9 @@ If your data has... less than ideal column names, clean them up in two ways:
 ps4_games <- janitor::clean_names(ps4_games)
 names(ps4_games)
 ```
+```{r}
+video_game_sales <- janitor::clean_names(video_game_sales)
+```
 
 **Using the `rename()` function**
 ```{r}
@@ -90,5 +92,272 @@ xbox_one_games <- rename(xbox_one_games, pos = "Pos", game = "Game", year = "Yea
 names(xbox_one_games)
 ```
 
+There are also more specific ways to clean your column names, using `toupper()` or `tolower()`.
 
+If there is ever blank spaces in your column names, you can replace them with a `str_replace()` function. (I didn't load any data here that had this issue.)
 
+# Utilizing Your Data Frame
+## Accessing Rows and Columns
+We can use `[]` to access rows and columns. The first position applies to rows, and the second applies to columns.
+```{r}
+ps4_games[1]
+```
+```{r}
+ps4_games[ ,4]
+```
+We can select the values in an entire column with  the `$` sign.
+```{r}
+n_america_sales <- ps4_games$north_america
+mean(n_america_sales)
+```
+## Creating Rows and Columns
+You can use the `rbind()` and `cbind()` functions to bind new data to our frame.
+
+## Subsetting Your Data Frame
+One way to subset your data is using the `subset()` function, which pulls out observations that meet specific criteria in a variable.
+```{r}
+top_na_sales <- subset(ps4_games, north_america > 2)
+top_na_sales
+```
+# Tidyverse and dplyr
+## `Select()`
+`Select()` helps you pull out columns of interest from a dataframe. The order you add them in determines their appearance on the output.
+```{r}
+select(ps4_games, game, publisher, north_america)
+```
+A range of columns can be selected via `startcol:endcol`.
+```{r}
+select(ps4_games, game:genre)
+```
+You can ignore columns you don't want to select with the `-` operator.
+```{r}
+select(ps4_games, -publisher, -global)
+```
+### Parsing Data with `Select()` Operators
+The `contains()` function returns variables with the keyword you've selected.
+```{r}
+names(video_game_sales)
+select(video_game_sales, contains("sales"))
+```
+If columns are sequentially named, then you can use `starts_with()` to narrow in on them.
+```{r}
+select(video_game_sales, starts_with("critic"))
+```
+`ends_with()` selects columns that end with a string.
+
+`contains()` selects columns that contain a string.
+
+`matches()` contains columns that match a string.
+*The `matches()` function can be used in regex, and is useful when you know if your column has a letter followed by a string.*
+
+`one_of()` selects column names that are from a group of names.
+
+Columns can also be selected (or ignored) based on their class of data.
+```{r}
+select_if(video_game_sales, is.character)
+```
+```{r}
+select_if(video_game_sales, ~!is.character(.))
+```
+
+## `Filter()`
+`Filter()` allows the extraction of *data* meeting a specific criteria to extract variables.
+```{r}
+filter(ps4_games, publisher == "Rockstar Games")
+```
+```{r}
+filter(ps4_games, north_america > 3.5)
+```
+You can use certain *operators* to specify how you want the data to be filtered.
+
+`!=` excludes.
+`>`, `>=` is for greater than/greater than or equal to.
+`<`, `<=` is for less than/less than or equal to.
+
+### Filtering Multiple Observations
+
+The `%in%` operator filters for multiple values in the same variable.
+```{r}
+filter(ps4_games, year %in% c(2016, 2018))
+```
+The `between()` functon is for a specific range of values.
+```{r}
+filter(ps4_games, between(north_america, 1.5, 2.5))
+```
+The `between()` function can also have a specified tolerance.
+```{r}
+filter(ps4_games, near(north_america, 2, tol = 0.2))
+```
+
+### Filtering Multiple Conditions
+
+The rules for filtering on multiple conditions is as follows:
+
+`filter(condition1, condition2)` returns rows where **both** conditions are met. The same is true if you use the operator `&`.
+
+`filter(condition1, !condition2)` returns rows where condition 1 is met, but not condition 2.
+
+`filter(condition1 | condition2)`returns rows where condition 1 and/or condition 2 is met.
+
+`filter(xor(condition1, condition2))` will return all rows where only **one** condition is met, but **not both**.
+
+```{r}
+filter(ps4_games, genre == "Role-Playing", (year != 2018 | north_america >= 3))
+```
+
+The fun thing about filters is they can also be used in conjunction with class-related commands. Look!
+```{r}
+filter(video_game_sales, !is.na(rating))
+```
+This let us get rid of any data that doesn't have an age rating associated.
+
+# Pipes
+`%>%` is your savior. Use it to make your code cleaner and helps you type less. It's wonderful. The shortcut for Macs is `CMD + SHFT + M'. 
+```{r}
+names(video_game_sales)
+video_game_sales %>%
+  select(name, genre, critic_score, critic_count) %>% 
+  filter(critic_score >= 80, genre == "Role-Playing") %>% 
+  arrange(critic_score)
+```
+See that `arrange()` function we used? That sorted our search for role-playing games that critics scored at least 80 to show us the games in ascending order. We can also do descending order by using `arrange(desc())`.
+```{r}
+video_game_sales %>%
+  select(name, genre, critic_score, critic_count) %>% 
+  filter(critic_score >= 80, genre == "Platform") %>% 
+  arrange(desc(critic_score))
+```
+Super Mario Galaxy was indeed, one of the best platforming games ever.
+
+## `Mutate()`
+There are two types of these functions: `mutate()` and `mutate_all()`.
+
+`Mutate()` allows us to make a new column from existing columns in the data frame.
+```{r}
+names(video_game_sales)
+video_game_sales %>%
+  mutate(percent_na_sales = na_sales/global_sales) %>% 
+  select(name, na_sales, global_sales, percent_na_sales)
+```
+If we wanted to make all the data lower-cased, we should change them with the `mutate_all()` function.
+```{r}
+video_game_sales %>%
+  mutate_all(tolower)
+```
+## `If_else()`
+The `if_else()` function is really great for finding and replacing data to make it more uniform. This works best if the data you have uses weird numbers or symbols for `NA` data. The person who made these data sets took care of it already, but you can do the following for data with funky data:
+
+` dataframe %>% 
+    select(variable1, variable2, variable3) %>% 
+    mutate(new_variable3 = ifelse(variable3 == -999.00, NA, variable3))`
+
+Here, we told R to look at our dataframe and replace any data in variable3 that has a `999.00` value with `NA`. This function also lets R know to leave that data alone if it already has `NA`.
+
+## `Tabyl()`
+The `tabyl()` function is the `janitor` package's version of `table()`.
+```{r}
+tabyl(ps4_games, genre)
+```
+
+## `Summarise()` and Friends
+The `summarise()` function produces a summary of statistics for a given variable in a data frame.
+
+```{r}
+names(video_game_sales)
+ps4_games %>% 
+  filter(genre == "Role-Playing") %>%
+  summarise(mean_tot_sales = mean(global),
+            mean_na_sales = mean(north_america),
+            mean_jp_sales = mean(japan),
+            total_games = n()) # n() provides the count of that variable
+```
+
+**Beware of your spelling!** I found out that you **need** to spell this function right to get the proper formatting to your coding. Take a look at the difference.
+
+`SummariZe()` is apart of the dataMaid package.
+```{r}
+msleep %>% 
+  group_by(vore) %>% 
+  summarize(min_bodywt = min(bodywt),
+            max_bodywt = max(bodywt),
+            mean_bodywt = mean(bodywt),
+            total = n())
+```
+
+`SummariSe()` is apart of the dplyr package.
+```{r}
+msleep %>% 
+  group_by(vore) %>% 
+  summarise(min_bodywt = min(bodywt),
+            max_bodywt = max(bodywt),
+            mean_bodywt = mean(bodywt),
+            total = n())
+```
+**Your spelling matters.**
+
+### `N_distinct()`
+`n_disinct()` is useful sub-command for the `summarise()` for cleanly presenting the number of distinct observations.
+```{r}
+ps4_games %>% 
+  summarise(n_genres = n_distinct(genre))
+```
+
+### `Group_by()`
+This is very helpful for further narrowing in on a specific summary of data.
+```{r}
+msleep %>% 
+  group_by(vore) %>% 
+  summarise(min_bodywt = min(bodywt),
+            max_bodywt = max(bodywt),
+            mean_bodywt = mean(bodywt),
+            total = n())
+
+```
+
+## Counts
+The `count()` function helps you determine how many observations you have in a column.
+```{r}
+video_game_sales %>% 
+  count(publisher, genre, sort = T) # sort = T sorts column in descending order.
+```
+EA really loves their sports games.
+
+You can even use the `tabyl()` function to get a count.
+```{r}
+video_game_sales %>% 
+  filter(publisher == "Square Enix") %>% 
+  tabyl(platform, genre)
+```
+Make your counts pretty with `adorn()` functions.
+```{r}
+video_game_sales %>% 
+  filter(publisher == "Square Enix") %>% 
+  tabyl(platform, genre) %>%
+  adorn_ns()
+```
+
+## `Across()`
+What if you wanted to use `filter()` and  `select()` across multiple variables? Use `across()`!
+```{r}
+video_game_sales %>% 
+  summarise(across(c(platform, genre, year_of_release), n_distinct))
+```
+
+Try it across a continuous variable!
+```{r}
+video_game_sales %>% 
+  summarise(across(contains("critic"), mean, na.rm = T))
+```
+Looks like most games get about 26 critics to give a score, but only score a 68-69. Uh oh..
+
+We can also combine it with `group_by()`.
+```{r}
+video_game_sales %>% 
+  group_by(publisher) %>% 
+  summarise(across(contains("critic"), mean, na.rm = T)) %>%
+  arrange(desc(critic_score))
+  
+```
+Everybody loves Valve!
+
+### End ###
