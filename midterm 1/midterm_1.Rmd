@@ -1,0 +1,156 @@
+---
+title: "Midterm 1"
+author: "Adrianna Ng"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: spacelab
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your code should be organized, clean, and run free from errors. Be sure to **add your name** to the author header above. You may use any resources to answer these questions (including each other), but you may not post questions to Open Stacks or external help sites. There are 12 total questions.  
+
+Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
+
+This exam is due by **12:00p on Thursday, January 28**.  
+
+## Load the tidyverse
+If you plan to use any other libraries to complete this assignment then you should load them here.
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(skimr)
+```
+
+## Questions
+**1. (2 points) Briefly explain how R, RStudio, and GitHub work together to make work flows in data science transparent and repeatable. What is the advantage of using RMarkdown in this context?** 
+
+R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist's code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won't take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions -- it is a form of annotating our data and codes in a way that can be easily understood by others. Data dissemination for all!
+
+**2. (2 points) What are the three types of `data structures` that we have discussed? Why are we using data frames for BIS 15L?**
+Vectors, data matrices, and data frames are the three types we have discussed. We are using data frames for BIS15L because it is like a spreadsheet that can store different classes of data and is not limited by the classes of data it can store (unlike a data matrix, which can only have one type).
+
+In the midterm 1 folder there is a second folder called `data`. Inside the `data` folder, there is a .csv file called `ElephantsMF`. These data are from Phyllis Lee, Stirling University, and are related to Lee, P., et al. (2013), "Enduring consequences of early experiences: 40-year effects on survival and success among African elephants (Loxodonta africana)," Biology Letters, 9: 20130011. [kaggle](https://www.kaggle.com/mostafaelseidy/elephantsmf).  
+
+**3. (2 points) Please load these data as a new object called `elephants`. Use the function(s) of your choice to get an idea of the structure of the data. Be sure to show the class of each variable.**
+```{r}
+elephants <- readr::read_csv("data/ElephantsMF.csv")
+elephants
+```
+```{r}
+summary(elephants)
+```
+```{r}
+glimpse(elephants)
+```
+It looks like age and height are of the `double floating point number` class, while sex is of the `character` class.
+**4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.**
+```{r}
+names(elephants)
+elephants <- janitor::clean_names(elephants)
+names(elephants)
+```
+```{r}
+elephants$sex <- as.factor(elephants$sex)
+is.factor(elephants$sex)
+```
+
+**5. (2 points) How many male and female elephants are represented in the data?**
+```{r}
+tabyl(elephants$sex)
+```
+There are 150 females in this elephant data set, while 138 males in this elephant data set.
+
+**6. (2 points) What is the average age all elephants in the data?**
+```{r}
+elephants %>% 
+  summarise(average_age = mean(age),
+            total = n())
+```
+
+**7. (2 points) How does the average age and height of elephants compare by sex?**
+```{r}
+elephants %>% 
+  group_by(sex) %>% 
+  summarise(avg_age = mean(age),
+            avg_height = mean(height),
+            total = n())
+```
+Female elephants are older and just a bit taller than male elephants.
+
+**8. (2 points) How does the average height of elephants compare by sex for individuals over 25 years old. Include the min and max height as well as the number of individuals in the sample as part of your analysis.**
+```{r}
+elephants %>% 
+  group_by(sex) %>%
+  filter(age > 25) %>% 
+  summarise(min_height = min(height),
+            max_height = max(height),
+            mean_height = mean(height),
+            total = n())
+```
+For the next series of questions, we will use data from a study on vertebrate community composition and impacts from defaunation in [Gabon, Africa](https://en.wikipedia.org/wiki/Gabon). One thing to notice is that the data include 24 separate transects. Each transect represents a path through different forest management areas.  
+
+Reference: Koerner SE, Poulsen JR, Blanchard EJ, Okouyi J, Clark CJ. Vertebrate community composition and diversity declines along a defaunation gradient radiating from rural villages in Gabon. _Journal of Applied Ecology_. 2016. This paper, along with a description of the variables is included inside the midterm 1 folder.  
+
+**9. (2 points) Load `IvindoData_DryadVersion.csv` and use the function(s) of your choice to get an idea of the overall structure. Change the variables `HuntCat` and `LandUse` to factors.**
+```{r}
+vertebrates <- readr::read_csv("data/IvindoData_DryadVersion.csv")
+vertebrates
+```
+```{r}
+vertebrates$HuntCat <- as.factor(vertebrates$HuntCat)
+vertebrates$LandUse <- as.factor(vertebrates$LandUse)
+is.factor(vertebrates$HuntCat)
+is.factor(vertebrates$LandUse)
+```
+```{r}
+vertebrates <- janitor::clean_names(vertebrates)
+```
+
+```{r}
+names(vertebrates)
+```
+```{r}
+summary(vertebrates)
+```
+
+**10. (4 points) For the transects with high and moderate hunting intensity, how does the average diversity of birds and mammals compare?**
+```{r}
+vertebrates %>% 
+  filter(hunt_cat != "None") %>% 
+  group_by(hunt_cat) %>% 
+  summarise(avg_bird = mean(diversity_bird_species),
+            avg_mammal = mean(diversity_mammal_species),
+            total = n(), .groups = "keep")
+```
+
+**11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 5km from a village to sites that are greater than 20km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.**  
+```{r}
+vertebrates %>%
+  group_by(transect_id, distance) %>% 
+  filter(distance < 5 | distance > 20) %>% 
+  summarise(across(c(ra_apes, ra_birds, ra_elephant, ra_monkeys, ra_rodent, ra_ungulate))) %>% 
+  arrange(desc(distance))
+  
+```
+
+
+**12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`**
+
+What happens to average species richness when land use falls under logging versus park?
+```{r}
+vertebrates %>% 
+  group_by(land_use) %>% 
+  filter(land_use != "Neither") %>% 
+  summarise(avg_rich_all = mean(rich_all_species),
+            avg_rich_bird = mean(rich_bird_species),
+            avg_rich_mammals = mean(rich_mammal_species))
+```
+Species richness decreases in areas designated for logging versus parks.. oh no! It also seems like mammals species richness declines greater than bird species richness in logging areas... We have to re-evaluate logging practices!
+
