@@ -1,7 +1,7 @@
 ---
 title: "Lab 6 Homework"
-author: "Please Add Your Name Here"
-date: "2021-01-25"
+author: "Adrianna Ng"
+date: "2021-01-26"
 output:
   html_document: 
     theme: spacelab
