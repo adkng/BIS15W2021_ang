@@ -1044,11 +1044,12 @@ top_na_sales</code></pre>
   summarise(mean_tot_sales = mean(global),
             mean_na_sales = mean(north_america),
             mean_jp_sales = mean(japan),
-            total_games = n()) # n() provides the count of that variable</code></pre>
+            total_games = n(), .groups= &#39;keep&#39;) # n() provides the count of that variable</code></pre>
 <pre><code>## # A tibble: 1 x 4
 ##   mean_tot_sales mean_na_sales mean_jp_sales total_games
 ##            &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;       &lt;int&gt;
 ## 1          0.511         0.180        0.0766         123</code></pre>
+<p><code>.groups= &#39;keep&#39;</code> is an additional piece of code you can append to the end of your <code>summarise()</code> to prevent a particular warning from appearing when running it.</p>
 <p><strong>Beware of your spelling!</strong> I found out that you <strong>need</strong> to spell this function right to get the proper formatting to your coding. Take a look at the difference.</p>
 <p><code>SummariZe()</code> is apart of the dataMaid package.</p>
 <pre class="r"><code>msleep %&gt;% 

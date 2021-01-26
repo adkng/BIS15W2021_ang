@@ -979,7 +979,7 @@ ps4_games %>%
   summarise(mean_tot_sales = mean(global),
             mean_na_sales = mean(north_america),
             mean_jp_sales = mean(japan),
-            total_games = n()) # n() provides the count of that variable
+            total_games = n(), .groups= 'keep') # n() provides the count of that variable
 ```
 
 ```
@@ -988,6 +988,8 @@ ps4_games %>%
 ##            <dbl>         <dbl>         <dbl>       <int>
 ## 1          0.511         0.180        0.0766         123
 ```
+
+`.groups= 'keep'` is an additional piece of code you can append to the end of your `summarise()` to prevent a particular warning from appearing when running it.
 
 **Beware of your spelling!** I found out that you **need** to spell this function right to get the proper formatting to your coding. Take a look at the difference.
 
