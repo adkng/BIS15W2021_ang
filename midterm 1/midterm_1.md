@@ -1,7 +1,7 @@
 ---
 title: "Midterm 1"
 author: "Adrianna Ng"
-date: "2021-01-26"
+date: "2021-01-27"
 output:
   html_document: 
     theme: spacelab
@@ -100,6 +100,7 @@ glimpse(elephants)
 ## $ Sex    <chr> "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M…
 ```
 It looks like age and height are of the `double floating point number` class, while sex is of the `character` class.
+
 **4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.**
 
 ```r
@@ -366,30 +367,23 @@ vertebrates %>%
 
 ```r
 vertebrates %>%
-  group_by(transect_id, distance) %>% 
+  group_by(distance) %>% 
   filter(distance < 5 | distance > 20) %>% 
   summarise(across(c(ra_apes, ra_birds, ra_elephant, ra_monkeys, ra_rodent, ra_ungulate))) %>% 
   arrange(desc(distance))
 ```
 
 ```
-## `summarise()` has grouped output by 'transect_id'. You can override using the `.groups` argument.
+## # A tibble: 6 x 7
+##   distance ra_apes ra_birds ra_elephant ra_monkeys ra_rodent ra_ungulate
+##      <dbl>   <dbl>    <dbl>       <dbl>      <dbl>     <dbl>       <dbl>
+## 1    26.8     4.91     31.6       0          54.1       1.29        8.12
+## 2    24.1     3.78     42.7       1.11       46.2       3.1         3.1 
+## 3    20.8    12.9      59.3       0.56       19.8       3.66        3.71
+## 4     3.83    0        57.8       0          37.8       3.19        1.04
+## 5     2.92    0.24     68.2       0          25.6       4.05        1.88
+## 6     2.7     0        85.0       0.290       9.09      3.74        1.86
 ```
-
-```
-## # A tibble: 6 x 8
-## # Groups:   transect_id [6]
-##   transect_id distance ra_apes ra_birds ra_elephant ra_monkeys ra_rodent
-##         <dbl>    <dbl>   <dbl>    <dbl>       <dbl>      <dbl>     <dbl>
-## 1          24    26.8     4.91     31.6       0          54.1       1.29
-## 2           6    24.1     3.78     42.7       1.11       46.2       3.1 
-## 3           3    20.8    12.9      59.3       0.56       19.8       3.66
-## 4          17     3.83    0        57.8       0          37.8       3.19
-## 5          27     2.92    0.24     68.2       0          25.6       4.05
-## 6          15     2.7     0        85.0       0.290       9.09      3.74
-## # … with 1 more variable: ra_ungulate <dbl>
-```
-
 
 **12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`**
 

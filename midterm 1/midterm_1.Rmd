@@ -50,6 +50,7 @@ summary(elephants)
 glimpse(elephants)
 ```
 It looks like age and height are of the `double floating point number` class, while sex is of the `character` class.
+
 **4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.**
 ```{r}
 names(elephants)
@@ -133,13 +134,12 @@ vertebrates %>%
 **11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let's try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 5km from a village to sites that are greater than 20km from a village? The variable `Distance` measures the distance of the transect from the nearest village. Hint: try using the `across` operator.**  
 ```{r}
 vertebrates %>%
-  group_by(transect_id, distance) %>% 
+  group_by(distance) %>% 
   filter(distance < 5 | distance > 20) %>% 
   summarise(across(c(ra_apes, ra_birds, ra_elephant, ra_monkeys, ra_rodent, ra_ungulate))) %>% 
   arrange(desc(distance))
   
 ```
-
 
 **12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`**
 

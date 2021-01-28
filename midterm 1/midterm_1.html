@@ -11,7 +11,7 @@
 
 <meta name="author" content="Adrianna Ng" />
 
-<meta name="date" content="2021-01-26" />
+<meta name="date" content="2021-01-27" />
 
 <title>Midterm 1</title>
 
@@ -399,7 +399,7 @@ summary {
 
 <h1 class="title toc-ignore">Midterm 1</h1>
 <h4 class="author">Adrianna Ng</h4>
-<h4 class="date">2021-01-26</h4>
+<h4 class="date">2021-01-27</h4>
 
 </div>
 
@@ -462,7 +462,8 @@ library(skimr)</code></pre>
 ## $ Age    &lt;dbl&gt; 1.40, 17.50, 12.75, 11.17, 12.67, 12.67, 12.25, 12.17, 28.17, …
 ## $ Height &lt;dbl&gt; 120.00, 227.00, 235.00, 210.00, 220.00, 189.00, 225.00, 204.00…
 ## $ Sex    &lt;chr&gt; &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M…</code></pre>
-<p>It looks like age and height are of the <code>double floating point number</code> class, while sex is of the <code>character</code> class. <strong>4. (2 points) Change the names of the variables to lower case and change the class of the variable <code>sex</code> to a factor.</strong></p>
+<p>It looks like age and height are of the <code>double floating point number</code> class, while sex is of the <code>character</code> class.</p>
+<p><strong>4. (2 points) Change the names of the variables to lower case and change the class of the variable <code>sex</code> to a factor.</strong></p>
 <pre class="r"><code>names(elephants)</code></pre>
 <pre><code>## [1] &quot;Age&quot;    &quot;Height&quot; &quot;Sex&quot;</code></pre>
 <pre class="r"><code>elephants &lt;- janitor::clean_names(elephants)
@@ -630,22 +631,19 @@ is.factor(vertebrates$HuntCat)</code></pre>
 ## 2 Moderate     1.62       1.68     8</code></pre>
 <p><strong>11. (4 points) One of the conclusions in the study is that the relative abundance of animals drops off the closer you get to a village. Let’s try to reconstruct this (without the statistics). How does the relative abundance (RA) of apes, birds, elephants, monkeys, rodents, and ungulates compare between sites that are less than 5km from a village to sites that are greater than 20km from a village? The variable <code>Distance</code> measures the distance of the transect from the nearest village. Hint: try using the <code>across</code> operator.</strong></p>
 <pre class="r"><code>vertebrates %&gt;%
-  group_by(transect_id, distance) %&gt;% 
+  group_by(distance) %&gt;% 
   filter(distance &lt; 5 | distance &gt; 20) %&gt;% 
   summarise(across(c(ra_apes, ra_birds, ra_elephant, ra_monkeys, ra_rodent, ra_ungulate))) %&gt;% 
   arrange(desc(distance))</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;transect_id&#39;. You can override using the `.groups` argument.</code></pre>
-<pre><code>## # A tibble: 6 x 8
-## # Groups:   transect_id [6]
-##   transect_id distance ra_apes ra_birds ra_elephant ra_monkeys ra_rodent
-##         &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
-## 1          24    26.8     4.91     31.6       0          54.1       1.29
-## 2           6    24.1     3.78     42.7       1.11       46.2       3.1 
-## 3           3    20.8    12.9      59.3       0.56       19.8       3.66
-## 4          17     3.83    0        57.8       0          37.8       3.19
-## 5          27     2.92    0.24     68.2       0          25.6       4.05
-## 6          15     2.7     0        85.0       0.290       9.09      3.74
-## # … with 1 more variable: ra_ungulate &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 6 x 7
+##   distance ra_apes ra_birds ra_elephant ra_monkeys ra_rodent ra_ungulate
+##      &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+## 1    26.8     4.91     31.6       0          54.1       1.29        8.12
+## 2    24.1     3.78     42.7       1.11       46.2       3.1         3.1 
+## 3    20.8    12.9      59.3       0.56       19.8       3.66        3.71
+## 4     3.83    0        57.8       0          37.8       3.19        1.04
+## 5     2.92    0.24     68.2       0          25.6       4.05        1.88
+## 6     2.7     0        85.0       0.290       9.09      3.74        1.86</code></pre>
 <p><strong>12. (4 points) Based on your interest, do one exploratory analysis on the <code>gabon</code> data of your choice. This analysis needs to include a minimum of two functions in <code>dplyr.</code></strong></p>
 <p>What happens to average species richness when land use falls under logging versus park?</p>
 <pre class="r"><code>vertebrates %&gt;% 
