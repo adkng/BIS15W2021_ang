@@ -362,4 +362,7 @@ video_game_sales %>%
 ```
 Everybody loves Valve!
 
+## `N_distinct()` and `N_levels()`
+`n_distinct()` is for ______, but `n_levels()` is for _______.
+
 ### End ###
