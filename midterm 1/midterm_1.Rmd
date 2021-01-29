@@ -31,7 +31,7 @@ library(skimr)
 ## Questions
 **1. (2 points) Briefly explain how R, RStudio, and GitHub work together to make work flows in data science transparent and repeatable. What is the advantage of using RMarkdown in this context?** 
 
-R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist's code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won't take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions -- it is a form of annotating our data and codes in a way that can be easily understood by others. Data dissemination for all!
+R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist's code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won't take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions -- it is a form of annotating our data and codes in a way that can be easily understood by others.
 
 **2. (2 points) What are the three types of `data structures` that we have discussed? Why are we using data frames for BIS 15L?**
 Vectors, data matrices, and data frames are the three types we have discussed. We are using data frames for BIS15L because it is like a spreadsheet that can store different classes of data and is not limited by the classes of data it can store (unlike a data matrix, which can only have one type).
@@ -49,22 +49,23 @@ summary(elephants)
 ```{r}
 glimpse(elephants)
 ```
-It looks like age and height are of the `double floating point number` class, while sex is of the `character` class.
 
 **4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.**
 ```{r}
-names(elephants)
-elephants <- janitor::clean_names(elephants)
+elephants <- clean_names(elephants)
 names(elephants)
 ```
+
 ```{r}
 elephants$sex <- as.factor(elephants$sex)
 is.factor(elephants$sex)
+summary(elephants)
 ```
 
 **5. (2 points) How many male and female elephants are represented in the data?**
 ```{r}
-tabyl(elephants$sex)
+elephants %>% 
+  count(sex)
 ```
 There are 150 females in this elephant data set, while 138 males in this elephant data set.
 
@@ -110,8 +111,9 @@ vertebrates$LandUse <- as.factor(vertebrates$LandUse)
 is.factor(vertebrates$HuntCat)
 is.factor(vertebrates$LandUse)
 ```
+
 ```{r}
-vertebrates <- janitor::clean_names(vertebrates)
+vertebrates <- clean_names(vertebrates)
 ```
 
 ```{r}
@@ -152,5 +154,3 @@ vertebrates %>%
             avg_rich_bird = mean(rich_bird_species),
             avg_rich_mammals = mean(rich_mammal_species))
 ```
-Species richness decreases in areas designated for logging versus parks.. oh no! It also seems like mammals species richness declines greater than bird species richness in logging areas... We have to re-evaluate logging practices!
-

@@ -1,7 +1,7 @@
 ---
 title: "Midterm 1"
 author: "Adrianna Ng"
-date: "2021-01-27"
+date: "2021-01-28"
 output:
   html_document: 
     theme: spacelab
@@ -30,7 +30,7 @@ library(skimr)
 ## Questions
 **1. (2 points) Briefly explain how R, RStudio, and GitHub work together to make work flows in data science transparent and repeatable. What is the advantage of using RMarkdown in this context?** 
 
-R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist's code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won't take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions -- it is a form of annotating our data and codes in a way that can be easily understood by others. Data dissemination for all!
+R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist's code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won't take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions -- it is a form of annotating our data and codes in a way that can be easily understood by others.
 
 **2. (2 points) What are the three types of `data structures` that we have discussed? Why are we using data frames for BIS 15L?**
 Vectors, data matrices, and data frames are the three types we have discussed. We are using data frames for BIS15L because it is like a spreadsheet that can store different classes of data and is not limited by the classes of data it can store (unlike a data matrix, which can only have one type).
@@ -99,26 +99,18 @@ glimpse(elephants)
 ## $ Height <dbl> 120.00, 227.00, 235.00, 210.00, 220.00, 189.00, 225.00, 204.00…
 ## $ Sex    <chr> "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M", "M…
 ```
-It looks like age and height are of the `double floating point number` class, while sex is of the `character` class.
 
 **4. (2 points) Change the names of the variables to lower case and change the class of the variable `sex` to a factor.**
 
 ```r
-names(elephants)
-```
-
-```
-## [1] "Age"    "Height" "Sex"
-```
-
-```r
-elephants <- janitor::clean_names(elephants)
+elephants <- clean_names(elephants)
 names(elephants)
 ```
 
 ```
 ## [1] "age"    "height" "sex"
 ```
+
 
 ```r
 elephants$sex <- as.factor(elephants$sex)
@@ -129,16 +121,33 @@ is.factor(elephants$sex)
 ## [1] TRUE
 ```
 
+```r
+summary(elephants)
+```
+
+```
+##       age            height       sex    
+##  Min.   : 0.01   Min.   : 75.46   F:150  
+##  1st Qu.: 4.58   1st Qu.:160.75   M:138  
+##  Median : 9.46   Median :200.00          
+##  Mean   :10.97   Mean   :187.68          
+##  3rd Qu.:16.50   3rd Qu.:221.09          
+##  Max.   :32.17   Max.   :304.06
+```
+
 **5. (2 points) How many male and female elephants are represented in the data?**
 
 ```r
-tabyl(elephants$sex)
+elephants %>% 
+  count(sex)
 ```
 
 ```
-##  elephants$sex   n   percent
-##              F 150 0.5208333
-##              M 138 0.4791667
+## # A tibble: 2 x 2
+##   sex       n
+## * <fct> <int>
+## 1 F       150
+## 2 M       138
 ```
 There are 150 females in this elephant data set, while 138 males in this elephant data set.
 
@@ -262,8 +271,9 @@ is.factor(vertebrates$LandUse)
 ## [1] TRUE
 ```
 
+
 ```r
-vertebrates <- janitor::clean_names(vertebrates)
+vertebrates <- clean_names(vertebrates)
 ```
 
 
@@ -405,5 +415,3 @@ vertebrates %>%
 ## 1 Logging          19.6          10.2             9.38
 ## 2 Park             21.9          10.4            11.4
 ```
-Species richness decreases in areas designated for logging versus parks.. oh no! It also seems like mammals species richness declines greater than bird species richness in logging areas... We have to re-evaluate logging practices!
-

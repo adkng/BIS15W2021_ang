@@ -11,7 +11,7 @@
 
 <meta name="author" content="Adrianna Ng" />
 
-<meta name="date" content="2021-01-27" />
+<meta name="date" content="2021-01-28" />
 
 <title>Midterm 1</title>
 
@@ -399,7 +399,7 @@ summary {
 
 <h1 class="title toc-ignore">Midterm 1</h1>
 <h4 class="author">Adrianna Ng</h4>
-<h4 class="date">2021-01-27</h4>
+<h4 class="date">2021-01-28</h4>
 
 </div>
 
@@ -421,7 +421,7 @@ library(skimr)</code></pre>
 <div id="questions" class="section level2">
 <h2>Questions</h2>
 <p><strong>1. (2 points) Briefly explain how R, RStudio, and GitHub work together to make work flows in data science transparent and repeatable. What is the advantage of using RMarkdown in this context?</strong></p>
-<p>R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist’s code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won’t take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions – it is a form of annotating our data and codes in a way that can be easily understood by others. Data dissemination for all!</p>
+<p>R is an open source, scripting language. RStudio is a GUI that is used to interact with R and make it easier to see what happens to your data when you create specific codes to analyze it. GitHub is a website for storing and managing files with programming codes in repositories that can be publicly available, so you could potentially run another scientist’s code from a published paper and work with that data. This enables transparency because your data needs to be correct before you get called out when others download it, as well as repeatability because it won’t take a lot of effort to restructure their steps. RMarkdown allows us to embed code in annotated chunks, show their results, and display any graphs in one file that can be exported into a multitude of different extensions – it is a form of annotating our data and codes in a way that can be easily understood by others.</p>
 <p><strong>2. (2 points) What are the three types of <code>data structures</code> that we have discussed? Why are we using data frames for BIS 15L?</strong> Vectors, data matrices, and data frames are the three types we have discussed. We are using data frames for BIS15L because it is like a spreadsheet that can store different classes of data and is not limited by the classes of data it can store (unlike a data matrix, which can only have one type).</p>
 <p>In the midterm 1 folder there is a second folder called <code>data</code>. Inside the <code>data</code> folder, there is a .csv file called <code>ElephantsMF</code>. These data are from Phyllis Lee, Stirling University, and are related to Lee, P., et al. (2013), “Enduring consequences of early experiences: 40-year effects on survival and success among African elephants (Loxodonta africana),” Biology Letters, 9: 20130011. <a href="https://www.kaggle.com/mostafaelseidy/elephantsmf">kaggle</a>.</p>
 <p><strong>3. (2 points) Please load these data as a new object called <code>elephants</code>. Use the function(s) of your choice to get an idea of the structure of the data. Be sure to show the class of each variable.</strong></p>
@@ -462,21 +462,29 @@ library(skimr)</code></pre>
 ## $ Age    &lt;dbl&gt; 1.40, 17.50, 12.75, 11.17, 12.67, 12.67, 12.25, 12.17, 28.17, …
 ## $ Height &lt;dbl&gt; 120.00, 227.00, 235.00, 210.00, 220.00, 189.00, 225.00, 204.00…
 ## $ Sex    &lt;chr&gt; &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M&quot;, &quot;M…</code></pre>
-<p>It looks like age and height are of the <code>double floating point number</code> class, while sex is of the <code>character</code> class.</p>
 <p><strong>4. (2 points) Change the names of the variables to lower case and change the class of the variable <code>sex</code> to a factor.</strong></p>
-<pre class="r"><code>names(elephants)</code></pre>
-<pre><code>## [1] &quot;Age&quot;    &quot;Height&quot; &quot;Sex&quot;</code></pre>
-<pre class="r"><code>elephants &lt;- janitor::clean_names(elephants)
+<pre class="r"><code>elephants &lt;- clean_names(elephants)
 names(elephants)</code></pre>
 <pre><code>## [1] &quot;age&quot;    &quot;height&quot; &quot;sex&quot;</code></pre>
 <pre class="r"><code>elephants$sex &lt;- as.factor(elephants$sex)
 is.factor(elephants$sex)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>summary(elephants)</code></pre>
+<pre><code>##       age            height       sex    
+##  Min.   : 0.01   Min.   : 75.46   F:150  
+##  1st Qu.: 4.58   1st Qu.:160.75   M:138  
+##  Median : 9.46   Median :200.00          
+##  Mean   :10.97   Mean   :187.68          
+##  3rd Qu.:16.50   3rd Qu.:221.09          
+##  Max.   :32.17   Max.   :304.06</code></pre>
 <p><strong>5. (2 points) How many male and female elephants are represented in the data?</strong></p>
-<pre class="r"><code>tabyl(elephants$sex)</code></pre>
-<pre><code>##  elephants$sex   n   percent
-##              F 150 0.5208333
-##              M 138 0.4791667</code></pre>
+<pre class="r"><code>elephants %&gt;% 
+  count(sex)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   sex       n
+## * &lt;fct&gt; &lt;int&gt;
+## 1 F       150
+## 2 M       138</code></pre>
 <p>There are 150 females in this elephant data set, while 138 males in this elephant data set.</p>
 <p><strong>6. (2 points) What is the average age all elephants in the data?</strong></p>
 <pre class="r"><code>elephants %&gt;% 
@@ -551,7 +559,7 @@ is.factor(vertebrates$HuntCat)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>is.factor(vertebrates$LandUse)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>vertebrates &lt;- janitor::clean_names(vertebrates)</code></pre>
+<pre class="r"><code>vertebrates &lt;- clean_names(vertebrates)</code></pre>
 <pre class="r"><code>names(vertebrates)</code></pre>
 <pre><code>##  [1] &quot;transect_id&quot;              &quot;distance&quot;                
 ##  [3] &quot;hunt_cat&quot;                 &quot;num_households&quot;          
@@ -657,7 +665,6 @@ is.factor(vertebrates$HuntCat)</code></pre>
 ##   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;dbl&gt;
 ## 1 Logging          19.6          10.2             9.38
 ## 2 Park             21.9          10.4            11.4</code></pre>
-<p>Species richness decreases in areas designated for logging versus parks.. oh no! It also seems like mammals species richness declines greater than bird species richness in logging areas… We have to re-evaluate logging practices!</p>
 </div>
 
 
