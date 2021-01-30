@@ -70,13 +70,13 @@ summary(amphibio)
 
 ```{r}
 amniota %>% 
-  miss_var_summary()
+  summarize(number_nas = sum(is.na(amniota)))
 ```
-This doesn't make sense, because the `NA` value for this data frame is `-999.00`, of which I saw a lot... so there is definitely more than 0 missing data for all of these.
+This doesn't make sense, because the `NA` value for this data frame is `-999.00`, of which I saw a lot... so there is definitely more than 0 missing data.
 
 ```{r}
 amphibio %>% 
-  miss_var_summary()
+  summarize(number_nas = sum(is.na(amphibio)))
 ```
 This does make sense, because when I looked through the data frame, the `NA` was represented as-is.
 
@@ -85,41 +85,54 @@ This does make sense, because when I looked through the data frame, the `NA` was
 amniota_tidy <- amniota %>%
   na_if("-999")
 ```
+
 ```{r}
 amniota_tidy %>% 
+  na_if("-30258.711") %>% 
   summary()
-```
-
-
-```{r}
-
 ```
 
 **6. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amniota` data.**  
 ```{r}
-
+amniota_tidy %>% 
+  miss_var_summary()
 ```
 
 **7. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amphibio` data.**
 ```{r}
-
+amphibio %>% 
+  miss_var_summary()
 ```
 
 **8. For the `amniota` data, calculate the number of NAs in the `egg_mass_g` column sorted by taxonomic class; i.e. how many NA's are present in the `egg_mass_g` column in birds, mammals, and reptiles? Does this results make sense biologically? How do these results affect your interpretation of NA's?**  
 
 ```{r}
-
+amniota_tidy %>% 
+  group_by(class) %>% 
+  select(egg_mass_g) %>% 
+  miss_var_summary()
 ```
+I see that the mammals have 100% NAs for this column based on the summary using `naniar`. This makes sense biologically because most mammals (save two) don't lay eggs. This would make me think that NAs here should be interpreted literally as "not applicable" to this category over "missing data that was not recorded".
 
-**9. The `amphibio` data have variables that classify species as fossorial (burrowing), terrestrial, aquatic, or arboreal.Calculate the number of NA's in each of these variables. Do you think that the authors intend us to think that there are NA's in these columns or could they represent something else? Explain.**
+**9. The `amphibio` data have variables that classify species as fossorial (burrowing), terrestrial, aquatic, or arboreal. Calculate the number of NA's in each of these variables. Do you think that the authors intend us to think that there are NA's in these columns or could they represent something else? Explain.**
 ```{r}
-
+names(amphibio)
+amphibio %>% 
+  select(fos, ter, aqu, arb) %>% 
+  miss_var_summary()
 ```
+I think it is a little bit of both? Yes, there could be data that was not recorded or is missing because it was not observed when they recorded this data. However, I feel like the authors may have also used the NAs as a means of conveying that this species couldn't be classified as fossorial/terrestrial/aquatic/arboreal because it doesn't apply to the species.
 
 **10. Now that we know how NA's are represented in the `amniota` data, how would you load the data such that the values which represent NA's are automatically converted?**
 ```{r}
-
+amniota_advanced <-
+  read_csv("data/amniota.csv", na = c("-999", "-30258.711"))
+  
 ```
+```{r}
+summary(amniota_advanced)
+```
+
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.  
