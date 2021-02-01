@@ -92,6 +92,24 @@ amniota_tidy %>%
   summary()
 ```
 
+```{r}
+amphibio %>% 
+  na_if("0") %>% 
+  summarize(number_nas = sum(is.na(amphibio)))
+```
+
+
+**double check?**
+```{r}
+amniota_tidy %>% 
+  summarize(number_nas = sum(is.na(amniota_tidy)))
+```
+
+```{r}
+amphibio %>% 
+  miss_var_summary()
+```
+
 **6. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amniota` data.**  
 ```{r}
 amniota_tidy %>% 
