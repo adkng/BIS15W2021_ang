@@ -78,57 +78,50 @@ This doesn't make sense, because the `NA` value for this data frame is `-999.00`
 amphibio %>% 
   summarize(number_nas = sum(is.na(amphibio)))
 ```
-This does make sense, because when I looked through the data frame, the `NA` was represented as-is.
+This does make sense, because when I looked through the data frame, the `NA` was represented as-is. However, I noticed that some columns have "0" in it, which I feel is another method of representing an `NA`, so there is some missing.
 
 **5. Make any necessary replacements in the data such that all NA's appear as "NA".**   
 ```{r}
 amniota_tidy <- amniota %>%
-  na_if("-999")
+  na_if("-999") %>% 
+  mutate(female_maturity_d_new = ifelse(female_maturity_d < 0, NA, female_maturity_d)) %>% 
+  select(-female_maturity_d)
 ```
 
 ```{r}
 amniota_tidy %>% 
-  na_if("-30258.711") %>% 
-  summary()
+  summarise(number_nas = sum(is.na(amniota_tidy)))
 ```
 
 ```{r}
-amphibio %>% 
-  na_if("0") %>% 
-  summarize(number_nas = sum(is.na(amphibio)))
+amphibio_tidy <- amphibio %>% 
+  na_if("0")
 ```
-
-
-**double check?**
-```{r}
-amniota_tidy %>% 
-  summarize(number_nas = sum(is.na(amniota_tidy)))
-```
+**Justification**: I read through the data and paper, and found that they used a binary unit to refer to "breeding strategy", which I interpreted as 1 = present and 0 = absent/not applicable. I figured that I should replace these `0` with `NA` because to me, this `0` indicates that the particular breeding strategy "does not apply" to this species (thus, fulfilling the `does not apply` of an `NA` definition).
 
 ```{r}
-amphibio %>% 
-  miss_var_summary()
+amphibio_tidy %>% 
+  summarise(number_nas = sum(is.na(amphibio_tidy)))
 ```
 
 **6. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amniota` data.**  
 ```{r}
 amniota_tidy %>% 
-  miss_var_summary()
+  naniar::miss_var_summary()
 ```
 
 **7. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amphibio` data.**
 ```{r}
-amphibio %>% 
-  miss_var_summary()
+amphibio_tidy %>% 
+  naniar::miss_var_summary()
 ```
-
 **8. For the `amniota` data, calculate the number of NAs in the `egg_mass_g` column sorted by taxonomic class; i.e. how many NA's are present in the `egg_mass_g` column in birds, mammals, and reptiles? Does this results make sense biologically? How do these results affect your interpretation of NA's?**  
 
 ```{r}
 amniota_tidy %>% 
   group_by(class) %>% 
   select(egg_mass_g) %>% 
-  miss_var_summary()
+  naniar::miss_var_summary()
 ```
 I see that the mammals have 100% NAs for this column based on the summary using `naniar`. This makes sense biologically because most mammals (save two) don't lay eggs. This would make me think that NAs here should be interpreted literally as "not applicable" to this category over "missing data that was not recorded".
 
@@ -137,7 +130,7 @@ I see that the mammals have 100% NAs for this column based on the summary using 
 names(amphibio)
 amphibio %>% 
   select(fos, ter, aqu, arb) %>% 
-  miss_var_summary()
+  naniar::miss_var_summary()
 ```
 I think it is a little bit of both? Yes, there could be data that was not recorded or is missing because it was not observed when they recorded this data. However, I feel like the authors may have also used the NAs as a means of conveying that this species couldn't be classified as fossorial/terrestrial/aquatic/arboreal because it doesn't apply to the species.
 
@@ -145,12 +138,10 @@ I think it is a little bit of both? Yes, there could be data that was not record
 ```{r}
 amniota_advanced <-
   read_csv("data/amniota.csv", na = c("-999", "-30258.711"))
-  
 ```
 ```{r}
 summary(amniota_advanced)
 ```
-
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.  
