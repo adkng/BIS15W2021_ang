@@ -122,7 +122,7 @@ amphibio %>%
   select(fos, ter, aqu, arb) %>% 
   naniar::miss_var_summary()
 ```
-I think it is a little bit of both? Yes, there could be data that was not recorded or is missing because it was not observed when they recorded this data. However, I feel like the authors may have also used the NAs as a means of conveying that this species couldn't be classified as fossorial/terrestrial/aquatic/arboreal because it doesn't apply to the species.
+I think the NA in the data stands for observations that was not recorded or is missing because it was not observed when they recorded this data.
 
 **10. Now that we know how NA's are represented in the `amniota` data, how would you load the data such that the values which represent NA's are automatically converted?**
 ```{r}

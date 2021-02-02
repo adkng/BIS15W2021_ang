@@ -11,7 +11,7 @@
 
 <meta name="author" content="Adrianna Ng" />
 
-<meta name="date" content="2021-02-01" />
+<meta name="date" content="2021-02-02" />
 
 <title>Lab 7 Homework</title>
 
@@ -399,7 +399,7 @@ summary {
 
 <h1 class="title toc-ignore">Lab 7 Homework</h1>
 <h4 class="author">Adrianna Ng</h4>
-<h4 class="date">2021-02-01</h4>
+<h4 class="date">2021-02-02</h4>
 
 </div>
 
@@ -1838,7 +1838,7 @@ Oliveira BF, São-Pedro VA, Santos-Barrera G, Penone C, Costa GC (2017). “Amph
 ## 2 arb        4347     64.2
 ## 3 aqu        2810     41.5
 ## 4 ter        1104     16.3</code></pre>
-<p>I think it is a little bit of both? Yes, there could be data that was not recorded or is missing because it was not observed when they recorded this data. However, I feel like the authors may have also used the NAs as a means of conveying that this species couldn’t be classified as fossorial/terrestrial/aquatic/arboreal because it doesn’t apply to the species.</p>
+<p>I think the NA in the data stands for observations that was not recorded or is missing because it was not observed when they recorded this data.</p>
 <p><strong>10. Now that we know how NA’s are represented in the <code>amniota</code> data, how would you load the data such that the values which represent NA’s are automatically converted?</strong></p>
 <pre class="r"><code>amniota_advanced &lt;-
   read_csv(&quot;data/amniota.csv&quot;, na = c(&quot;-999&quot;, &quot;-30258.711&quot;))</code></pre>
