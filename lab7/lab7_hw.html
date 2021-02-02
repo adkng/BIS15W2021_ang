@@ -411,9 +411,10 @@ summary {
 </div>
 <div id="load-the-libraries" class="section level2">
 <h2>Load the libraries</h2>
-<pre class="r"><code>library(tidyverse)
-library(janitor)
-library(skimr)</code></pre>
+<pre class="r"><code>library(&quot;tidyverse&quot;)
+library(&quot;janitor&quot;)
+library(&quot;skimr&quot;)
+library(&quot;naniar&quot;)</code></pre>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -1746,7 +1747,7 @@ Oliveira BF, São-Pedro VA, Santos-Barrera G, Penone C, Costa GC (2017). “Amph
 ##   number_nas
 ##        &lt;int&gt;
 ## 1     170691</code></pre>
-<p>This does make sense, because when I looked through the data frame, the <code>NA</code> was represented as-is. However, I noticed that some columns have “0” in it, which I feel is another method of representing an <code>NA</code>, so there is some missing.</p>
+<p>This does make sense, because when I looked through the data frame, the <code>NA</code> was represented as-is.</p>
 <p><strong>5. Make any necessary replacements in the data such that all NA’s appear as “NA”.</strong></p>
 <pre class="r"><code>amniota_tidy &lt;- amniota %&gt;%
   na_if(&quot;-999&quot;) %&gt;% 
@@ -1758,15 +1759,6 @@ Oliveira BF, São-Pedro VA, Santos-Barrera G, Penone C, Costa GC (2017). “Amph
 ##   number_nas
 ##        &lt;int&gt;
 ## 1     528200</code></pre>
-<pre class="r"><code>amphibio_tidy &lt;- amphibio %&gt;% 
-  na_if(&quot;0&quot;)</code></pre>
-<p><strong>Justification</strong>: I read through the data and paper, and found that they used a binary unit to refer to “breeding strategy”, which I interpreted as 1 = present and 0 = absent/not applicable. I figured that I should replace these <code>0</code> with <code>NA</code> because to me, this <code>0</code> indicates that the particular breeding strategy “does not apply” to this species (thus, fulfilling the <code>does not apply</code> of an <code>NA</code> definition).</p>
-<pre class="r"><code>amphibio_tidy %&gt;% 
-  summarise(number_nas = sum(is.na(amphibio_tidy)))</code></pre>
-<pre><code>## # A tibble: 1 x 1
-##   number_nas
-##        &lt;int&gt;
-## 1     182085</code></pre>
 <p><strong>6. Use the package <code>naniar</code> to produce a summary, including percentages, of missing data in each column for the <code>amniota</code> data.</strong></p>
 <pre class="r"><code>amniota_tidy %&gt;% 
   naniar::miss_var_summary()</code></pre>
@@ -1785,7 +1777,7 @@ Oliveira BF, São-Pedro VA, Santos-Barrera G, Penone C, Costa GC (2017). “Amph
 ## 10 female_svl_cm                   20242     94.9
 ## # … with 26 more rows</code></pre>
 <p><strong>7. Use the package <code>naniar</code> to produce a summary, including percentages, of missing data in each column for the <code>amphibio</code> data.</strong></p>
-<pre class="r"><code>amphibio_tidy %&gt;% 
+<pre class="r"><code>amphibio %&gt;% 
   naniar::miss_var_summary()</code></pre>
 <pre><code>## # A tibble: 38 x 3
 ##    variable n_miss pct_miss
@@ -1796,10 +1788,10 @@ Oliveira BF, São-Pedro VA, Santos-Barrera G, Penone C, Costa GC (2017). “Amph
 ##  4 seeds      6772     99.9
 ##  5 leaves     6752     99.6
 ##  6 dry_cold   6735     99.4
-##  7 viv        6722     99.2
-##  8 vert       6657     98.2
-##  9 wet_cold   6625     97.8
-## 10 crepu      6608     97.5
+##  7 vert       6657     98.2
+##  8 wet_cold   6625     97.8
+##  9 crepu      6608     97.5
+## 10 dry_warm   6572     97.0
 ## # … with 28 more rows</code></pre>
 <p><strong>8. For the <code>amniota</code> data, calculate the number of NAs in the <code>egg_mass_g</code> column sorted by taxonomic class; i.e. how many NA’s are present in the <code>egg_mass_g</code> column in birds, mammals, and reptiles? Does this results make sense biologically? How do these results affect your interpretation of NA’s?</strong></p>
 <pre class="r"><code>amniota_tidy %&gt;% 

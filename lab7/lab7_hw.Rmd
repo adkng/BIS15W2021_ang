@@ -19,9 +19,10 @@ Make sure to use the formatting conventions of RMarkdown to make your report nea
 
 ## Load the libraries
 ```{r message=FALSE, warning=FALSE}
-library(tidyverse)
-library(janitor)
-library(skimr)
+library("tidyverse")
+library("janitor")
+library("skimr")
+library("naniar")
 ``` 
 
 ## Data
@@ -78,7 +79,7 @@ This doesn't make sense, because the `NA` value for this data frame is `-999.00`
 amphibio %>% 
   summarize(number_nas = sum(is.na(amphibio)))
 ```
-This does make sense, because when I looked through the data frame, the `NA` was represented as-is. However, I noticed that some columns have "0" in it, which I feel is another method of representing an `NA`, so there is some missing.
+This does make sense, because when I looked through the data frame, the `NA` was represented as-is.
 
 **5. Make any necessary replacements in the data such that all NA's appear as "NA".**   
 ```{r}
@@ -93,17 +94,6 @@ amniota_tidy %>%
   summarise(number_nas = sum(is.na(amniota_tidy)))
 ```
 
-```{r}
-amphibio_tidy <- amphibio %>% 
-  na_if("0")
-```
-**Justification**: I read through the data and paper, and found that they used a binary unit to refer to "breeding strategy", which I interpreted as 1 = present and 0 = absent/not applicable. I figured that I should replace these `0` with `NA` because to me, this `0` indicates that the particular breeding strategy "does not apply" to this species (thus, fulfilling the `does not apply` of an `NA` definition).
-
-```{r}
-amphibio_tidy %>% 
-  summarise(number_nas = sum(is.na(amphibio_tidy)))
-```
-
 **6. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amniota` data.**  
 ```{r}
 amniota_tidy %>% 
@@ -112,7 +102,7 @@ amniota_tidy %>%
 
 **7. Use the package `naniar` to produce a summary, including percentages, of missing data in each column for the `amphibio` data.**
 ```{r}
-amphibio_tidy %>% 
+amphibio %>% 
   naniar::miss_var_summary()
 ```
 **8. For the `amniota` data, calculate the number of NAs in the `egg_mass_g` column sorted by taxonomic class; i.e. how many NA's are present in the `egg_mass_g` column in birds, mammals, and reptiles? Does this results make sense biologically? How do these results affect your interpretation of NA's?**  
