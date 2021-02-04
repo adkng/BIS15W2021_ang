@@ -34,22 +34,26 @@ library(here)
 ## Grammar of Graphics
 The ability to quickly produce and edit graphs and charts is a strength of R. These data visualizations are produced by the package `ggplot2` and it is a core part of the tidyverse. The syntax for using ggplot is specific and common to all of the plots. This is what Hadley Wickham calls a [Grammar of Graphics](http://vita.had.co.nz/papers/layered-grammar.pdf). The "gg" in `ggplot` stands for grammar of graphics.
 
+Plots are built in layers, and the grammar of graphics defines the layers.
+
 ## Philosophy
-What makes a good chart? In my opinion a good chart is elegant in its simplicity. It provides a clean, clear visual of the data without being overwhelming to the reader. This can be hard to do and takes some careful thinking. Always keep in mind that the reader will almost never know the data as well as you do so you need to be mindful about presenting the facts.  
+What makes a good chart? In my opinion a good chart is **elegant in its simplicity**. It provides a clean, clear visual of the data without being overwhelming to the reader. This can be hard to do and takes some careful thinking. Always keep in mind that the reader will almost never know the data as well as you do so you need to be mindful about presenting the facts.
+
+One mistake people make is learning how to make extremely fancy plots... but really, it's overwhelming! Be a little humble when you make them for the best outcome.
 
 ## Data Types
 We first need to define some of the data types we will use to build plots.  
 
-+ `discrete` quantitative data that only contains integers
-+ `continuous` quantitative data that can take any numerical value
-+ `categorical` qualitative data that can take on a limited number of values
++ `discrete` quantitative data that only contains *integers*
++ `continuous` quantitative data that can take *any numerical value*
++ `categorical` qualitative data that can take on a *limited number of values*
 
 ## Basics
 The syntax used by ggplot takes some practice to get used to, especially for customizing plots, but the basic elements are the same. It is helpful to think of plots as being built up in layers.  
 
-In short, **plot= data + geom_ + aesthetics**.  
+In short, **plot = data + geom_ + aesthetics**.  
 
-We start by calling the ggplot function, identifying the data, and specifying the axes. We then add the `geom` type to describe how we want our data represented. Each `geom_` works with specific types of data and R is capable of building plots of single variables, multiple variables, and even maps. Lastly, we add aesthetics.
+We start by calling the ggplot function, identifying the data, and specifying the axes (x, y). We then add the `geom` type to describe how we want our data represented. Each `geom_` works with specific types of data and R is capable of building plots of single variables, multiple variables, and even maps. Lastly, we add aesthetics.
 
 ## Example
 To make things easy, let's start with some built in data.
@@ -64,14 +68,17 @@ glimpse(iris)
 
 To make a plot, we need to first specify the data and map the aesthetics. The aesthetics include how each variable in our data set will be used. In the example below, I am using the aes() function to identify the x and y variables in the plot.
 ```{r}
-ggplot(data=iris, mapping=aes(x=Species, y=Petal.Length))
+ggplot(data = iris, 
+       mapping = aes(x = Species, y = Petal.Length))
 ```
+You will end up with a blank plot... but look, everything is where it should be! We have a range, and the x/y axes we designated.
 
 Notice that we have a nice background, labeled axes, and even a value range of our variables on the y-axis- but no plot. This is because we need to tell ggplot how we want our data represented. This is called the geometry or `geom()`. There are many types of `geom`, see the ggplot [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf).
 
 Here we specify that we want a boxplot, indicated by `geom_boxplot()`.
 ```{r}
-ggplot(data=iris, mapping=aes(x=Species, y=Petal.Length))+geom_boxplot()
+ggplot(data = iris, 
+       mapping=aes(x = Species, y = Petal.Length))+geom_boxplot()
 ```
 
 ## Practice
@@ -82,6 +89,11 @@ names(iris)
 
 ```{r}
 ggplot(data=iris, mapping=aes(x= Sepal.Width, y=Sepal.Length, ))+
+  geom_point()
+```
+The reverse would look like:
+```{r}
+ggplot(data=iris, mapping=aes(x= Sepal.Length, y=Sepal.Width,))+
   geom_point()
 ```
 
@@ -130,7 +142,7 @@ To add a regression (best of fit) line, we just add another layer.
 ```{r}
 ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
   geom_point()+
-  geom_smooth(method=lm, se=T) #adds the regression line, `se=TRUE` will add standard error
+  geom_smooth(method=lm, se=T) #adds the regression line, `se=TRUE` will add standard error (95% CI interval, se=F just gives the line)
 ```
 
 ### Practice
@@ -140,11 +152,14 @@ names(homerange)
 ```
 
 ```{r}
-ggplot(data=homerange, mapping=aes(x=log10.hra, y=log10.preymass))+geom_point(na.rm=T)
+ggplot(homerange,
+       aes(x = log10.hra, y = log10.preymass)) + geom_point(na.rm = T) 
 ```
 
 ### Bar Plot: `geom_bar()`
 The simplest type of bar plot counts the number of observations in a categorical variable. In this case, we want to know how many observations are present in the variable `trophic.guild`. Notice that we do not specify a y-axis because it is count by default.  
+
+It just counts the number of times it sees a variable in a category.
 
 ```{r}
 names(homerange)
@@ -161,16 +176,23 @@ homerange %>%
   ggplot(aes(x=trophic.guild)) + 
   geom_bar()
 ```
+*Tip: don't use pipes when specifying the geom_()... use `+` instead.*
+
+To make your analysis of data clearer, consider adding both a table and graph! It helps you double check and makes your data easy to read.
+
 
 ### Bar Plot: `geom_col()`
-Unlike `geom_bar()`, `geom_col()` allows us to specify an x-axis and a y-axis.
+Unlike `geom_bar()`, `geom_col()` allows us to specify an x-axis *and* a y-axis. ==> Use for specifying x and y axis only, while geom_bar() is for x axis only.
 ```{r}
 homerange %>% 
-  filter(family=="salmonidae") %>% 
-  ggplot(aes(x=common.name, y=log10.mass))+
+  filter(family == "salmonidae") %>% 
+  ggplot(aes(x = common.name, y = log10.mass))+
   geom_col()
 ```
+If you tried using geom_bar(), you will get an error because it only needs one axis specified!
 
+
+However, you can still use geom_bar() in another fashion...
 `geom_bar()` with `stat="identity"`
 `stat="identity"` allows us to map a variable to the y-axis so that we aren't restricted to counts.
 ```{r}
@@ -201,26 +223,43 @@ glimpse(homerange)
 
 ```{r}
 homerange %>% 
-  filter(class=="mammalia")
+  filter(class == "mammalia")
 ```
-
+Alternatively...
+```{r}
+homerange %>% 
+  filter(taxon == "mammals")
+```
 
 2. Are there more herbivores or carnivores in mammals? Make a bar plot that shows their relative numbers.
 ```{r}
+homerange %>%
+  filter(taxon == "mammals") %>% 
+  group_by(trophic.guild) %>% 
+  ggplot(aes(x = trophic.guild)) + geom_bar()
+```
+Ledford's work
+```{r}
 homerange %>% 
-  filter(class=="mammalia") %>% 
+  filter(class == "mammalia") %>% 
   group_by(trophic.guild) %>% 
   count()
 ```
 ```{r}
 homerange %>% 
-  filter(class=="mammalia") %>% 
-  group_by(trophic.guild) %>% 
+  filter(class == "mammalia") %>% 
+  group_by(trophic.guild) %>%
   count() %>% 
-  ggplot(aes(y=trophic.guild, x=n))+
-  geom_col()
+  ggplot(aes(x = trophic.guild, y = n)) + geom_col()
 ```
-
+If we flip it around...
+```{r}
+homerange %>% 
+  filter(class == "mammalia") %>% 
+  group_by(trophic.guild) %>%
+  count() %>% 
+  ggplot(aes(y = trophic.guild, x = n)) + geom_col()
+```
 
 3. Make a bar plot that shows the masses of the top 10 smallest mammals.
 ```{r}
@@ -229,27 +268,37 @@ names(homerange)
 
 ```{r}
 homerange %>% 
-  filter(class=="mammalia") %>% 
-  top_n(-10, log10.mass) %>% 
-  ggplot(aes(x=common.name, y=log10.mass))+
-  geom_col()
+  filter(taxon == "mammals") %>% 
+  arrange(log10.mass)
 ```
 
 ```{r}
 homerange %>% 
-  filter(class=="mammalia") %>% 
-  top_n(-10, log10.mass) %>% 
-  ggplot(aes(x=common.name, y=log10.mass))+
-  geom_col()+
+  filter(taxon == "mammals", mean.mass.g <= 22.00) %>% 
+  ggplot(aes(x = common.name, y = mean.mass.g)) + geom_col()
+```
+
+Ledford's work
+```{r}
+homerange %>% 
+  filter(class == "mammalia") %>% 
+  top_n(-10, log10.mass) %>%   # bottom ten of the specified variable
+  ggplot(aes(x = common.name, y = log10.mass)) + geom_col() 
+```
+```{r}
+homerange %>% 
+  filter(class == "mammalia") %>% 
+  top_n(-10, log10.mass) %>%   # bottom ten of the specified variable
+  ggplot(aes(x = common.name, y = log10.mass)) + 
+  geom_col() +
   coord_flip()
 ```
-
 ```{r}
 homerange %>% 
-  filter(class=="mammalia") %>% 
-  top_n(-10, log10.mass) %>% 
-  ggplot(aes(x=reorder(common.name, log10.mass), y=log10.mass))+
-  geom_col()+
+  filter(class == "mammalia") %>% 
+  top_n(-10, log10.mass) %>%   # bottom ten of the specified variable
+  ggplot(aes(x = reorder(common.name, log10.mass), y = log10.mass)) + # the `reorder()` function allows you to reorder the variable based on another... we said we wanted to "reorder" the common.name axis by the log10 mass!
+  geom_col() +
   coord_flip()
 ```
 
