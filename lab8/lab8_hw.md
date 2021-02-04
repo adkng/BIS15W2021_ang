@@ -1,7 +1,7 @@
 ---
 title: "Lab 8 Homework"
 author: "Adrianna Ng"
-date: "2021-02-03"
+date: "2021-02-04"
 output:
   html_document: 
     theme: spacelab
@@ -172,9 +172,7 @@ sydneybeaches
 ## 10       25 Sydney C… Randwick… Clove…      151.    -33.9 25/0…                0
 ## # … with 3,680 more rows
 ```
-(1) each variable has its own column -- no. The "date" is all compressed together (with month, day, and year), which are all data.
-(2) each observation has its own row -- yes! The observations for each day on a particular date are in its own row.
-(3) each value has its own cell  -- no! Again, the "date" is sharing values in their cells.
+It appears to be tidy because each variable has its own column, each observation has its own row, and each cell has its own value. It is in long format because the site names are repeated.
 
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Adrianna Ng" />
 
-<meta name="date" content="2021-02-03" />
+<meta name="date" content="2021-02-04" />
 
 <title>Lab 8 Homework</title>
 
@@ -399,7 +399,7 @@ summary {
 
 <h1 class="title toc-ignore">Lab 8 Homework</h1>
 <h4 class="author">Adrianna Ng</h4>
-<h4 class="date">2021-02-03</h4>
+<h4 class="date">2021-02-04</h4>
 
 </div>
 
@@ -663,11 +663,7 @@ library(skimr)</code></pre>
 ##  9       25 Sydney C… Randwick… Clove…      151.    -33.9 07/0…                3
 ## 10       25 Sydney C… Randwick… Clove…      151.    -33.9 25/0…                0
 ## # … with 3,680 more rows</code></pre>
-<ol style="list-style-type: decimal">
-<li>each variable has its own column – no. The “date” is all compressed together (with month, day, and year), which are all data.</li>
-<li>each observation has its own row – yes! The observations for each day on a particular date are in its own row.</li>
-<li>each value has its own cell – no! Again, the “date” is sharing values in their cells.</li>
-</ol>
+<p>It appears to be tidy because each variable has its own column, each observation has its own row, and each cell has its own value. It is in long format because the site names are repeated.</p>
 <ol start="3" style="list-style-type: decimal">
 <li>We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object <code>sydneybeaches_long</code></li>
 </ol>
