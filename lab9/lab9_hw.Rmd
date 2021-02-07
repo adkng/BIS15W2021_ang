@@ -1,0 +1,179 @@
+---
+title: "Lab 9 Homework"
+author: "Adrianna Ng"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: spacelab
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your final lab report should be organized, clean, and run free from errors. Remember, you must remove the `#` for the included code chunks to run. Be sure to add your name to the author header above.  
+
+Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+library(skimr)
+``` 
+
+For this homework, we will take a departure from biological data and use data about California colleges. These data are a subset of the national college scorecard (https://collegescorecard.ed.gov/data/). Load the `ca_college_data.csv` as a new object called `colleges`.
+```{r}
+colleges <- read_csv("data/ca_college_data.csv")
+```
+
+The variables are a bit hard to decipher, here is a key:  
+
+INSTNM: Institution name  
+CITY: California city  
+STABBR: Location state  
+ZIP: Zip code  
+ADM_RATE: Admission rate  
+SAT_AVG: SAT average score  
+PCIP26: Percentage of degrees awarded in Biological And Biomedical Sciences  
+COSTT4_A: Annual cost of attendance  
+C150_4_POOLED: 4-year completion rate  
+PFTFTUG1_EF: Percentage of undergraduate students who are first-time, full-time degree/certificate-seeking undergraduate students  
+
+1. Use your preferred function(s) to have a look at the data and get an idea of its structure. Make sure you summarize NA's and determine whether or not the data are tidy. You may also consider dealing with any naming issues.
+```{r}
+colleges
+```
+
+```{r}
+summary(colleges)
+```
+
+```{r}
+colleges <- clean_names(colleges)
+names(colleges)
+```
+
+```{r}
+skim(colleges)
+```
+```{r}
+colleges %>% 
+  miss_var_summary()
+```
+It looks like the data is tidy because each variable has its own column, each observation has its own row, and each value has its own cell!
+
+2. Which cities in California have the highest number of colleges?
+```{r}
+colleges %>%
+  select(city, instnm) %>% 
+  group_by(city) %>% 
+  summarise(n_colleges = n()) %>% 
+  arrange(desc(n_colleges))
+```
+
+3. Based on your answer to #2, make a plot that shows the number of colleges in the top 10 cities.
+```{r}
+colleges %>%
+  select(city, instnm) %>% 
+  group_by(city) %>% 
+  summarise(n_colleges = n()) %>%
+  top_n(10, n_colleges) %>% 
+  ggplot(aes(x = reorder(city, n_colleges), y = n_colleges)) +
+  geom_col() +
+  coord_flip()
+```
+
+4. The column `COSTT4_A` is the annual cost of each institution. Which city has the highest average cost? Where is it located?
+```{r}
+colleges %>% 
+  select(instnm, city, costt4_a) %>% 
+  group_by(city) %>% 
+  summarise(avg_cost = mean(costt4_a, na.rm = T)) %>% 
+  arrange(desc(avg_cost))
+```
+
+5. Based on your answer to #4, make a plot that compares the cost of the individual colleges in the most expensive city. Bonus! Add UC Davis here to see how it compares :>).
+```{r}
+colleges %>% 
+  select(instnm, city, costt4_a) %>% 
+  filter(city == c("Claremont", "Davis"), costt4_a != "NA") %>% 
+  group_by(city) %>%
+  ggplot(aes(x = instnm, y = costt4_a)) +
+  geom_col()
+```
+
+6. The column `ADM_RATE` is the admissions rate by college and `C150_4_POOLED` is the four-year completion rate. Use a scatterplot to show the relationship between these two variables. What do you think this means?
+```{r}
+colleges %>% 
+  ggplot(aes(x = adm_rate, y = c150_4_pooled)) +
+  geom_jitter(na.rm = T)
+```
+It looks like as admission rate increases, the four-year completion rate tends to decrease.
+
+7. Is there a relationship between cost and four-year completion rate? (You don't need to do the stats, just produce a plot). What do you think this means?
+```{r}
+colleges %>% 
+  ggplot(aes(x = costt4_a, y = c150_4_pooled)) +
+  geom_jitter(na.rm = T)
+```
+As cost of attendance increases, the four-year completion rate tends to increase. People want their money's worth -- if they are going to spend so much, might as well see it the whole way through. I would want to finish my education too, since I am spending so much money!
+
+8. The column titled `INSTNM` is the institution name. We are only interested in the University of California colleges. Make a new data frame that is restricted to UC institutions. You can remove `Hastings College of Law` and `UC San Francisco` as we are only interested in undergraduate institutions.
+```{r}
+uc_system <- colleges %>%
+  filter(str_detect(instnm, "University of California"))
+uc_system
+```
+
+Remove `Hastings College of Law` and `UC San Francisco` and store the final data frame as a new object `univ_calif_final`.
+```{r}
+univ_calif_final <- uc_system %>% 
+  filter(!str_detect(instnm, "Hastings College of Law")) %>% 
+  filter(!str_detect(instnm, "San Francisco"))
+univ_calif_final
+```
+
+Use `separate()` to separate institution name into two new columns "UNIV" and "CAMPUS".
+```{r}
+univ_calif_final <- univ_calif_final %>% 
+  separate(instnm,
+           into = c("univ", "campus"),
+           sep = "-")
+univ_calif_final
+```
+
+9. The column `ADM_RATE` is the admissions rate by campus. Which UC has the lowest and highest admissions rates? Produce a numerical summary and an appropriate plot.
+```{r}
+univ_calif_final %>% 
+  summarise(across(c(campus, adm_rate))) %>% 
+  arrange(desc(adm_rate))
+```
+Riverside has the highest admissions rate, while Berkeley has the lowest.
+
+```{r}
+univ_calif_final %>% 
+  ggplot(aes(x = reorder(campus, adm_rate), y = adm_rate)) +
+  geom_col() +
+  coord_flip()
+```
+
+10. If you wanted to get a degree in biological or biomedical sciences, which campus confers the majority of these degrees? Produce a numerical summary and an appropriate plot.
+```{r}
+univ_calif_final %>% 
+  summarise(across(c(campus, pcip26))) %>% 
+  arrange(desc(pcip26))
+```
+
+```{r}
+univ_calif_final %>% 
+  ggplot(aes(x = reorder(campus, pcip26), y = pcip26)) +
+  geom_col() +
+  coord_flip()
+```
+
+## Knit Your Output and Post to [GitHub](https://github.com/FRS417-DataScienceBiologists)
