@@ -143,6 +143,8 @@ vertebrates %>%
   
 ```
 
+_My only suggestion here (which was not explicit in the question) is that I would probably makes this comparison with the means of these indices._
+
 **12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`**
 
 What happens to average species richness when land use falls under logging versus park?
@@ -154,3 +156,5 @@ vertebrates %>%
             avg_rich_bird = mean(rich_bird_species),
             avg_rich_mammals = mean(rich_mammal_species))
 ```
+
+_Great job Adrianna!_

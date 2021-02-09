@@ -1,7 +1,7 @@
 ---
 title: "Midterm 1"
 author: "Adrianna Ng"
-date: "2021-01-28"
+date: "2021-02-09"
 output:
   html_document: 
     theme: spacelab
@@ -395,6 +395,8 @@ vertebrates %>%
 ## 6     2.7     0        85.0       0.290       9.09      3.74        1.86
 ```
 
+_My only suggestion here (which was not explicit in the question) is that I would probably makes this comparison with the means of these indices._
+
 **12. (4 points) Based on your interest, do one exploratory analysis on the `gabon` data of your choice. This analysis needs to include a minimum of two functions in `dplyr.`**
 
 What happens to average species richness when land use falls under logging versus park?
@@ -415,3 +417,5 @@ vertebrates %>%
 ## 1 Logging          19.6          10.2             9.38
 ## 2 Park             21.9          10.4            11.4
 ```
+
+_Great job Adrianna!_
