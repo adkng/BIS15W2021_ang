@@ -1,0 +1,280 @@
+---
+title: "Data Visualization: `ggplot` part 2"
+output:
+  html_document:
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+## Learning Goals
+*At the end of this exercise, you will be able to:*    
+1. Produce box plots using `ggplot.`  
+2. Customize labels on axes using `labs` and `themes`.  
+3. Use `color`, `fill`, and `group` to customize plots and improve overall aesthetics.  
+
+## Review
+Now that you have been introduced to `ggplot`, let's review the plot types from last week and learn how to manipulate their aesthetics to better suit our needs. Aesthetics make a significant difference, but you can take it too far so remember that the goal is to produce clean plots that are not distracting.  
+
+##Resources
+- [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+- [`ggplot` themes](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+- [Rebecca Barter `ggplot` Tutorial](http://www.rebeccabarter.com/blog/2017-11-17-ggplot2_tutorial/)
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+## Load the data
+Let's revisit the mammal life history data to practice our ggplot skills. The [data](http://esapubs.org/archive/ecol/E084/093/) are from: *S. K. Morgan Ernest. 2003. Life history characteristics of placental non-volant mammals. Ecology 84:3402.*
+```{r message=FALSE, warning=FALSE}
+life_history <- readr::read_csv(here("lab10", "data", "mammal_lifehistories_v2.csv")) %>% 
+  na_if("-999") %>% 
+  clean_names()
+```
+
+```{r}
+glimpse(life_history)
+```
+
+## Bar Plots
+Bar plots count the number of observations in a categorical variable.
+```{r}
+life_history %>% 
+  count(order, sort = T) # sort = T works descending order
+```
+
+```{r}
+life_history %>% 
+  ggplot(aes(x = order)) +
+  geom_bar() +
+  coord_flip()
+```
+The x-axis is a little nasty... so use `coord_flip()` to clean it up a bit!
+
+```{r}
+life_history %>% 
+  group_by(order) %>% 
+  summarise(mean_mass = mean(mass, na.rm = T))
+```
+```{r}
+life_history %>% 
+  group_by(order) %>% 
+  summarise(mean_mass = mean(mass, na.rm = T)) %>% 
+  ggplot(aes(x = order, y = mean_mass)) +
+  geom_col()
+```
+Uh oh! Our x-axis is all jumbled, and the y-axis is in scientific notaion (which R automatically converts big numbers to.)
+```{r}
+options(scipen=999) #cancels scientific notation for the session, not permanently
+```
+
+Some animals are really, really big... but some are really, really small... how can we reconcile this? Scale it!
+```{r}
+life_history %>% 
+  group_by(order) %>% 
+  summarise(mean_mass = mean(mass, na.rm = T)) %>% 
+  ggplot(aes(x = order, y = mean_mass)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_log10() # this scales the y-axis based on a log-10 unit
+```
+
+## Scatterplots
+Scatter plots allow for comparisons of two continuous variables. Does wean mass have any correlation with gestation? If you are pregnant for longer, your baby's wean mass must be larger...
+```{r}
+life_history %>% 
+  ggplot(aes(x = gestation, y = wean_mass)) +
+  geom_point(na.rm = T) +
+  scale_y_log10() +
+  geom_smooth(method = "lm") # this adds a regression line!
+```
+Some ofthe masses are too different.. so scale the y-axis based on a log10 scale. Now, it looks much better and you can easily see there is a positive correlation.
+
+## Boxplots
+Box plots help us visualize a range of values. So, on the x-axis we typically have something categorical and the y-axis is the range.
+```{r}
+glimpse(life_history)
+```
+
+```{r}
+life_history %>% 
+  ggplot(aes(x = order, y = mass)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  coord_flip()
+```
+
+Remember, you can always use dplyr functions to focus your question, summarize, etc.
+```{r}
+life_history %>%
+  filter(order == "Primates") %>% 
+  ggplot(aes(x = family, y = mass)) +
+  geom_boxplot(na.rm = T) +
+  scale_y_log10() +
+  coord_flip()
+```
+See the error? It is talking about `NA`s once again. Just use the `na.rm = T` in the geom_plot() functions to get rid of these kinds of errors/warnings.
+
+## Practice  
+For this practice, let's go back to the elephants data from midterm 1. Maybe we can make our midterm answers "pop" with some nice plots!
+```{r}
+elephants <- read_csv(here("lab10", "data", "ElephantsMF.csv")) %>% 
+  clean_names()
+```
+
+1. On midterm 1, I asked how many male and female elephants were represented in the data. How would you make a plot of this?
+```{r}
+elephants %>% 
+  ggplot(aes(x = sex)) + 
+  geom_bar()
+```
+
+2. How does the age of elephants compare by sex?
+```{r}
+#elephants %>% 
+  #group_by(sex) %>% 
+  #summarise(avg_age = mean(age, na.rm = T)) %>% 
+  #ggplot(aes(x = sex, y = avg_age)) +
+  #geom_col()
+```
+
+Ledford's work
+```{r}
+elephants %>% 
+  ggplot(aes(x = sex, y = age)) +
+  geom_boxplot()
+```
+
+
+3. What is the relationship between age and height?
+```{r}
+elephants %>% 
+  ggplot(aes(x = age, y = height)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) # se = F removes the confidence intervals (the gray areas)
+```
+
+## Aesthetics: Labels
+Now that we have practiced scatter plots, bar plots, and box plots we need to learn how to adjust their appearance to suit our needs. Let's start with labeling x and y axes.  
+
+In the example above we looked at age and height of elephants.
+```{r}
+elephants %>% 
+  ggplot(aes(x=age, y=height)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se=F)
+```
+
+The plot looks clean, but it is incomplete. There isn't a title, and there aren't any units of measurements. A reader unfamiliar with the data might have a difficult time interpreting the labels. To add custom labels, we use the `labs` command.
+```{r}
+elephants %>% 
+  ggplot(aes(x=age, y=height)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se=F) +
+  labs(title="Elephant Age vs. Height",
+       x="Age",
+       y="Height (cm)")
+```
+
+We can improve the plot further by adjusting the size and face of the text. We do this using `theme()`.
+```{r}
+elephants %>% 
+  ggplot(aes(x=age, y=height)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se=F) +
+  labs(title = "Elephant Age vs. Height",
+       x = "Age",
+       y = "Height") +
+  theme(plot.title = element_text(size = 12, face = "bold"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 10))
+```
+
+The `rel()` option changes the relative size of the title to keep things consistent. Adding `hjust` allows control of title position.
+```{r}
+elephants %>% 
+  ggplot(aes(x=age, y=height)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se=F) +
+  labs(title = "Elephant Age vs. Height",
+       x = "Age",
+       y = "Height") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0)) # instead of specifying specific font size, it will adjust it for you! note, hjust = horizontal justification/positioning where 1 = right, 0 = left
+```
+Once you settle on a format for your report, those aesthetics can be copied and pasted for all your plots! Just attach the chunk containing your `lab()` and `theme()` functions to your code creating the graphs. Very professional!
+
+## Other Aesthetics
+There are lots of options for aesthetics. An aesthetic can be assigned to either numeric or categorical data. `fill` is a common grouping option; notice that an appropriate key is displayed when you use one of these options.
+```{r}
+elephants %>% 
+  ggplot(aes(x = sex, fill = sex)) + #the bars are now color-coded by sex! very cool.
+  geom_bar() +
+  labs(title = "Number of Elephants by Sex",
+       x = "Sex",
+       y = NULL) + # you could also say `n` to denote the count, but `null` removes the label here
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5))
+```
+Look, there is even a little key to the right explaining the fill colors. Remember, you can copy and add it anywhere.
+
+You can also add the fill function to fill it as something you are not actively plotting. (But, that's for later.)
+
+`size` adjusts the size of points relative to a continuous variable.
+```{r}
+life_history %>% 
+  ggplot(aes(x = gestation, y = log10(mass), size = mass)) + #we don't have to use the y_scale_log10() separately, we can just use it here... the `size` function means your point is sized to the mass
+  geom_point(na.rm=T)
+```
+The biggest individuals get bigger sized dots!
+
+Side note: These plots are exploratory. Use it to poke around and see things like outliers or other things of interest... for example, some animals in this data have a gestation period of over 20 months! That's a long time to be pregnant. Which animals are they?
+
+```{r}
+life_history %>% 
+  filter(gestation>20)
+```
+Looks like they are both elephants.
+
+## Practice
+Let's end today's lab by looking at the homerange data. By now, these should be very familiar to you.
+```{r}
+homerange <- read_csv(here("lab10", "data", "Tamburelloetal_HomeRangeDatabase.csv"))
+```
+
+```{r}
+names(homerange)
+```
+```{r}
+glimpse(homerange)
+```
+
+
+1. Make a barplot that shows counts of ectotherms and endotherms. Label the axes, provide a title, and fill by `thermoregulation`.
+```{r}
+homerange %>% 
+  ggplot(aes(x = thermoregulation, fill = thermoregulation)) +
+  geom_bar() +
+  labs(title = "# Taxa by Thermoregulation",
+       x = "Thermoregulation strategy",
+       y = NULL) +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5))
+```
+
+2. Make a scatterplot that compares log10.mass and homerange. Adjust the size of points by mass. Label the axes and provide a title.
+```{r}
+homerange %>% 
+  ggplot(aes(x = log10.hra, y = log10.mass)) +
+  geom_point(size = 1) + # you can input size here to make it a little neater/show where you are editing your sizes
+  labs(title = "Mass vs Homerange",
+       x = "HRA",
+       y = "Mass")
+```
+
+## That's it! Take a break and I will see you on Zoom!  
+
+-->[Home](https://jmledford3115.github.io/datascibiol/)
