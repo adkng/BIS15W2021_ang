@@ -1,7 +1,7 @@
 ---
 title: "Lab 9 Homework"
 author: "Adrianna Ng"
-date: "2021-02-07"
+date: "2021-02-13"
 output:
   html_document: 
     theme: spacelab
@@ -33,7 +33,7 @@ colleges <- read_csv("data/ca_college_data.csv")
 
 ```
 ## 
-## ── Column specification ────────────────────────────────────────────────────────
+## -- Column specification --------------------------------------------------------
 ## cols(
 ##   INSTNM = col_character(),
 ##   CITY = col_character(),
@@ -71,17 +71,17 @@ colleges
 ## # A tibble: 341 x 10
 ##    INSTNM CITY  STABBR ZIP   ADM_RATE SAT_AVG PCIP26 COSTT4_A C150_4_POOLED
 ##    <chr>  <chr> <chr>  <chr>    <dbl>   <dbl>  <dbl>    <dbl>         <dbl>
-##  1 Gross… El C… CA     9202…       NA      NA 0.0016     7956        NA    
-##  2 Colle… Visa… CA     9327…       NA      NA 0.0066     8109        NA    
-##  3 Colle… San … CA     9440…       NA      NA 0.0038     8278        NA    
-##  4 Ventu… Vent… CA     9300…       NA      NA 0.0035     8407        NA    
-##  5 Oxnar… Oxna… CA     9303…       NA      NA 0.0085     8516        NA    
-##  6 Moorp… Moor… CA     9302…       NA      NA 0.0151     8577        NA    
-##  7 Skyli… San … CA     9406…       NA      NA 0          8580         0.233
-##  8 Glend… Glen… CA     9120…       NA      NA 0.002      9181        NA    
-##  9 Citru… Glen… CA     9174…       NA      NA 0.0021     9281        NA    
-## 10 Fresn… Fres… CA     93741       NA      NA 0.0324     9370        NA    
-## # … with 331 more rows, and 1 more variable: PFTFTUG1_EF <dbl>
+##  1 Gross~ El C~ CA     9202~       NA      NA 0.0016     7956        NA    
+##  2 Colle~ Visa~ CA     9327~       NA      NA 0.0066     8109        NA    
+##  3 Colle~ San ~ CA     9440~       NA      NA 0.0038     8278        NA    
+##  4 Ventu~ Vent~ CA     9300~       NA      NA 0.0035     8407        NA    
+##  5 Oxnar~ Oxna~ CA     9303~       NA      NA 0.0085     8516        NA    
+##  6 Moorp~ Moor~ CA     9302~       NA      NA 0.0151     8577        NA    
+##  7 Skyli~ San ~ CA     9406~       NA      NA 0          8580         0.233
+##  8 Glend~ Glen~ CA     9120~       NA      NA 0.002      9181        NA    
+##  9 Citru~ Glen~ CA     9174~       NA      NA 0.0021     9281        NA    
+## 10 Fresn~ Fres~ CA     93741       NA      NA 0.0324     9370        NA    
+## # ... with 331 more rows, and 1 more variable: PFTFTUG1_EF <dbl>
 ```
 
 
@@ -103,7 +103,7 @@ summary(colleges)
 ##  1st Qu.:0.4581   1st Qu.: 985   1st Qu.:0.00000   1st Qu.:12578  
 ##  Median :0.6370   Median :1078   Median :0.00000   Median :16591  
 ##  Mean   :0.5901   Mean   :1112   Mean   :0.01981   Mean   :26685  
-##  3rd Qu.:0.7461   3rd Qu.:1237   3rd Qu.:0.02458   3rd Qu.:39289  
+##  3rd Qu.:0.7461   3rd Qu.:1237   3rd Qu.:0.02457   3rd Qu.:39289  
 ##  Max.   :1.0000   Max.   :1555   Max.   :0.21650   Max.   :69355  
 ##  NA's   :240      NA's   :276    NA's   :35        NA's   :124    
 ##  C150_4_POOLED     PFTFTUG1_EF    
@@ -216,7 +216,7 @@ colleges %>%
 ##  8 Pasadena               6
 ##  9 Fresno                 5
 ## 10 Irvine                 5
-## # … with 151 more rows
+## # ... with 151 more rows
 ```
 
 3. Based on your answer to #2, make a plot that shows the number of colleges in the top 10 cities.
@@ -258,8 +258,12 @@ colleges %>%
 ##  8 Thousand Oaks          54373
 ##  9 Rancho Palos Verdes    50758
 ## 10 La Verne               50603
-## # … with 151 more rows
+## # ... with 151 more rows
 ```
+<style>
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+</style>
+<div class = "blue">
 
 5. Based on your answer to #4, make a plot that compares the cost of the individual colleges in the most expensive city. Bonus! Add UC Davis here to see how it compares :>).
 
@@ -273,11 +277,12 @@ colleges %>%
 ```
 
 ```
-## Warning in city == c("Claremont", "Davis"): longer object length is not a
-## multiple of shorter object length
+## Warning in city == c("Claremont", "Davis"): 較長的物件長度並非較短物件長度的倍數
 ```
 
 ![](lab9_hw_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+</div>
 
 6. The column `ADM_RATE` is the admissions rate by college and `C150_4_POOLED` is the four-year completion rate. Use a scatterplot to show the relationship between these two variables. What do you think this means?
 
@@ -313,17 +318,17 @@ uc_system
 ## # A tibble: 10 x 10
 ##    instnm city  stabbr zip   adm_rate sat_avg pcip26 costt4_a c150_4_pooled
 ##    <chr>  <chr> <chr>  <chr>    <dbl>   <dbl>  <dbl>    <dbl>         <dbl>
-##  1 Unive… La J… CA     92093    0.357    1324  0.216    31043         0.872
-##  2 Unive… Irvi… CA     92697    0.406    1206  0.107    31198         0.876
-##  3 Unive… Rive… CA     92521    0.663    1078  0.149    31494         0.73 
-##  4 Unive… Los … CA     9009…    0.180    1334  0.155    33078         0.911
-##  5 Unive… Davis CA     9561…    0.423    1218  0.198    33904         0.850
-##  6 Unive… Sant… CA     9506…    0.578    1201  0.193    34608         0.776
-##  7 Unive… Berk… CA     94720    0.169    1422  0.105    34924         0.916
-##  8 Unive… Sant… CA     93106    0.358    1281  0.108    34998         0.816
-##  9 Unive… San … CA     9410…   NA          NA NA           NA        NA    
-## 10 Unive… San … CA     9414…   NA          NA NA           NA        NA    
-## # … with 1 more variable: pftftug1_ef <dbl>
+##  1 Unive~ La J~ CA     92093    0.357    1324  0.216    31043         0.872
+##  2 Unive~ Irvi~ CA     92697    0.406    1206  0.107    31198         0.876
+##  3 Unive~ Rive~ CA     92521    0.663    1078  0.149    31494         0.73 
+##  4 Unive~ Los ~ CA     9009~    0.180    1334  0.155    33078         0.911
+##  5 Unive~ Davis CA     9561~    0.423    1218  0.198    33904         0.850
+##  6 Unive~ Sant~ CA     9506~    0.578    1201  0.193    34608         0.776
+##  7 Unive~ Berk~ CA     94720    0.169    1422  0.105    34924         0.916
+##  8 Unive~ Sant~ CA     93106    0.358    1281  0.108    34998         0.816
+##  9 Unive~ San ~ CA     9410~   NA          NA NA           NA        NA    
+## 10 Unive~ San ~ CA     9414~   NA          NA NA           NA        NA    
+## # ... with 1 more variable: pftftug1_ef <dbl>
 ```
 
 Remove `Hastings College of Law` and `UC San Francisco` and store the final data frame as a new object `univ_calif_final`.
@@ -339,15 +344,15 @@ univ_calif_final
 ## # A tibble: 8 x 10
 ##   instnm city  stabbr zip   adm_rate sat_avg pcip26 costt4_a c150_4_pooled
 ##   <chr>  <chr> <chr>  <chr>    <dbl>   <dbl>  <dbl>    <dbl>         <dbl>
-## 1 Unive… La J… CA     92093    0.357    1324  0.216    31043         0.872
-## 2 Unive… Irvi… CA     92697    0.406    1206  0.107    31198         0.876
-## 3 Unive… Rive… CA     92521    0.663    1078  0.149    31494         0.73 
-## 4 Unive… Los … CA     9009…    0.180    1334  0.155    33078         0.911
-## 5 Unive… Davis CA     9561…    0.423    1218  0.198    33904         0.850
-## 6 Unive… Sant… CA     9506…    0.578    1201  0.193    34608         0.776
-## 7 Unive… Berk… CA     94720    0.169    1422  0.105    34924         0.916
-## 8 Unive… Sant… CA     93106    0.358    1281  0.108    34998         0.816
-## # … with 1 more variable: pftftug1_ef <dbl>
+## 1 Unive~ La J~ CA     92093    0.357    1324  0.216    31043         0.872
+## 2 Unive~ Irvi~ CA     92697    0.406    1206  0.107    31198         0.876
+## 3 Unive~ Rive~ CA     92521    0.663    1078  0.149    31494         0.73 
+## 4 Unive~ Los ~ CA     9009~    0.180    1334  0.155    33078         0.911
+## 5 Unive~ Davis CA     9561~    0.423    1218  0.198    33904         0.850
+## 6 Unive~ Sant~ CA     9506~    0.578    1201  0.193    34608         0.776
+## 7 Unive~ Berk~ CA     94720    0.169    1422  0.105    34924         0.916
+## 8 Unive~ Sant~ CA     93106    0.358    1281  0.108    34998         0.816
+## # ... with 1 more variable: pftftug1_ef <dbl>
 ```
 
 Use `separate()` to separate institution name into two new columns "UNIV" and "CAMPUS".
@@ -364,15 +369,15 @@ univ_calif_final
 ## # A tibble: 8 x 11
 ##   univ  campus city  stabbr zip   adm_rate sat_avg pcip26 costt4_a c150_4_pooled
 ##   <chr> <chr>  <chr> <chr>  <chr>    <dbl>   <dbl>  <dbl>    <dbl>         <dbl>
-## 1 Univ… San D… La J… CA     92093    0.357    1324  0.216    31043         0.872
-## 2 Univ… Irvine Irvi… CA     92697    0.406    1206  0.107    31198         0.876
-## 3 Univ… River… Rive… CA     92521    0.663    1078  0.149    31494         0.73 
-## 4 Univ… Los A… Los … CA     9009…    0.180    1334  0.155    33078         0.911
-## 5 Univ… Davis  Davis CA     9561…    0.423    1218  0.198    33904         0.850
-## 6 Univ… Santa… Sant… CA     9506…    0.578    1201  0.193    34608         0.776
-## 7 Univ… Berke… Berk… CA     94720    0.169    1422  0.105    34924         0.916
-## 8 Univ… Santa… Sant… CA     93106    0.358    1281  0.108    34998         0.816
-## # … with 1 more variable: pftftug1_ef <dbl>
+## 1 Univ~ San D~ La J~ CA     92093    0.357    1324  0.216    31043         0.872
+## 2 Univ~ Irvine Irvi~ CA     92697    0.406    1206  0.107    31198         0.876
+## 3 Univ~ River~ Rive~ CA     92521    0.663    1078  0.149    31494         0.73 
+## 4 Univ~ Los A~ Los ~ CA     9009~    0.180    1334  0.155    33078         0.911
+## 5 Univ~ Davis  Davis CA     9561~    0.423    1218  0.198    33904         0.850
+## 6 Univ~ Santa~ Sant~ CA     9506~    0.578    1201  0.193    34608         0.776
+## 7 Univ~ Berke~ Berk~ CA     94720    0.169    1422  0.105    34924         0.916
+## 8 Univ~ Santa~ Sant~ CA     93106    0.358    1281  0.108    34998         0.816
+## # ... with 1 more variable: pftftug1_ef <dbl>
 ```
 
 9. The column `ADM_RATE` is the admissions rate by campus. Which UC has the lowest and highest admissions rates? Produce a numerical summary and an appropriate plot.
