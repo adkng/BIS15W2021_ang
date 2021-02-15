@@ -55,24 +55,40 @@ p
 ```
 
 ```{r}
-p+theme_linedraw()+
+p +
+  theme_linedraw() +
   theme(axis.text.x = element_text(angle = 60, hjust=1))+
   labs(title = "Observations by Taxon in Homerange Data",
        x = NULL,
        y= "n",
        fill= "Trophic Guild")
 ```
+```{r}
+p +
+  theme_classic()
+```
 
 ## Legends
 There are lots of options to manipulate legends. Have a look [here](http://www.sthda.com/english/wiki/ggplot2-legend-easy-steps-to-change-the-position-and-the-appearance-of-a-graph-legend-in-r-software).
 ```{r}
-p+theme_linedraw()+
-  theme(legend.position = "bottom",
+p +
+  theme_linedraw() +
+  theme(legend.position = "top", #by default, legends are on the right
         axis.text.x = element_text(angle = 60, hjust=1))+
   labs(title = "Observations by Taxon in Homerange Data",
        x = NULL,
        y= "n",
        fill= "Trophic Guild")
+```
+```{r}
+p +
+  theme_linedraw() +
+  theme(legend.position = '', #gets rid of the legend entirely
+        axis.text.x = element_text(angle = 60, hjust=1))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL,
+       y= "n",
+       fill= "Trophic Guild") # `fill = "" is the new legend title
 ```
 
 ## Not enough? [ggthemes](https://yutannihilation.github.io/allYourFigureAreBelongToUs/)
@@ -106,17 +122,18 @@ Access the help for `RColorBrewer`.
 
 The thing to notice is that there are three different palettes: 1) sequential, 2) diverging, and 3) qualitative. Within each of these there are several selections. You can bring up the colors by using `display.brewer.pal()`. Specify the number of colors that you want and the palette name.
 ```{r}
-display.brewer.pal(8,"PRGn")
+display.brewer.pal(8,"PRGn") # you want an eight-color palette from x
 ```
 
 The [R Color Brewer](http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) website is very helpful for getting an idea of the color palettes. To make things easy, use these two guidelines:
 
-+`scale_colour_brewer()` is for points  
-+`scale_fill_brewer()` is for fills  
++`scale_colour_brewer()` is for *points*  (e.g. geom_point())
++`scale_fill_brewer()` is for *fills*  (e.g. geom_bar() or geom_col())
 
 Here I chose the `Paired` palette. Take a moment and experiment with other options.
 ```{r}
-p+scale_fill_brewer(palette = "Paired")+
+p+
+  scale_fill_brewer(palette = "Paired")+
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 60, hjust=1))+
   labs(title = "Observations by Taxon in Homerange Data",
@@ -129,11 +146,12 @@ p+scale_fill_brewer(palette = "Paired")+
 You can also use `paleteer` to build a custom palette for consistency. To access the `paleteer` collection, I add it to a new object.
 ```{r}
 colors <- paletteer::palettes_d_names
+view(colors) # tells you how many colors and best use
 ```
 
 Now we can display the palettes. Assign the palette to `my_palette` and then build this base R bar plot. There are a lot of options; `paleteer` is a collection of popular palettes. I really like the [`ggsci` package] (https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html)
 ```{r}
-my_palette <- paletteer_d("ggsci::hallmarks_light_cosmic")
+my_palette <- paletteer::paletteer_d("ggsci::hallmarks_light_cosmic")
 ```
 
 ```{r}
@@ -157,19 +175,33 @@ There are many options for adjusting the x and y axes. For details, look over ex
 homerange %>% 
   ggplot(aes(x = log10.mass, y = log10.hra, color = locomotion)) +
   geom_point() +
-  xlim(0, 4) +
-  ylim(1, 6)
+  annotate("text", label = "r^2 == 0", parse = T, x = 6, y = 0)
+```
+
+```{r}
+homerange %>% 
+  ggplot(aes(x = log10.mass, y = log10.hra, color = locomotion)) +
+  geom_point() +
+  xlim(0, 4) + #zoom in between 0 and 4
+  ylim(1, 6) + # zoom in between 1 and 6 
+  
 ```
 
 ## Practice
 1. Revisit the relationship between mass and homerange using a scatterplot, but color the points by taxonomic class using a custom color theme.
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x = log10.mass, y = log10.hra, color = class)) +
+  geom_point() +
+  scale_color_brewer(palette = "BrBG")
 ```
 
 2. Build bar plots that show the representation by taxonomic class with carnivores and herbivores. Try using a color theme that matches your scatterplot to keep everything consistent.
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x = trophic.guild, y = class, fill = class)) +
+  geom_col(position = "dodge", alpha = 0.6, color = "black") +
+  scale_fill_brewer(palette = "BrBG")
 ```
 
 ## Faceting: `facet_wrap()`
@@ -178,16 +210,30 @@ homerange %>%
 p2 <- homerange %>% 
   ggplot(aes(x = log10.mass)) +
   geom_density()
+p2
 ```
 
 ```{r}
-p2+ facet_wrap(~taxon)
+p2+ facet_wrap(~taxon) # i want you to make a wrap by/`~` taxon (a categorical variable)
+```
+```{r}
+p2 +
+  facet_wrap(~class) # do not give it a categorical variable with too many things
 ```
 
 ## Faceting: `facet_grid()`
 As you can imagine, there are lots of options for faceting. Another useful facet type is `facet_grid`. 
 ```{r}
-p2+facet_grid(thermoregulation~class)
+p2+facet_grid(thermoregulation~class) # class on top, thermoregulation on the side
+```
+Remember, it won't plot for groupings that don't exist. This graph is saying this is the distribution of log10 mass for reptiles that are ectotherms.
+
+## Printing
+There are many ways to export things out of R... here's how you do it!
+```{r}
+pdf("homerange.pdf") # we are telling it the name 
+p2 # this is the plot we want to export
+dev.off() # this means we close the pdf
 ```
 
 ## That's it, let's take a break!   

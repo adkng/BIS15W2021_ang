@@ -29,10 +29,6 @@ Please make sure that you have 1-2 data sets to share with your group member dur
 
 ## Install `RColorBrewer` and `paletteer`
 `RColorBrewer` and `paletteer` are helpful in selecting palettes of color that work with your data. Please install these now, we will work with them in part 2 of today's lab.
-```{r, eval=FALSE, echo=TRUE}
-#install.packages("RColorBrewer")
-#install.packages("paletteer")
-```
 
 ## Load the libraries
 ```{r message=FALSE, warning=FALSE}
@@ -41,6 +37,8 @@ library(RColorBrewer)
 library(paletteer)
 library(janitor)
 library(here)
+library(skimr)
+library(ggthemes)
 ```
 
 ```{r}
@@ -68,7 +66,7 @@ deserts %>%
   group_by(year, species_id) %>% 
   summarise(n=n())
 ```
-
+We want to know how many times this species was collected/observed during these years. The columns are tidy, so it is not super easy to read.
 ```{r}
 deserts$year <- as.factor(deserts$year)
 ```
@@ -78,7 +76,7 @@ deserts %>%
   filter(species_id=="DM" | species_id=="DS") %>% 
   group_by(year, species_id) %>% 
   summarise(n=n()) %>% 
-  ggplot(aes(x=year, y=n, group=species_id, color=species_id))+
+  ggplot(aes(x=year, y=n))+
   geom_line()+
   geom_point(shape=1)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
@@ -87,20 +85,38 @@ deserts %>%
        fill = "n")
 ```
 
+```{r}
+deserts %>% 
+  filter(species_id=="DM" | species_id=="DS") %>% 
+  group_by(year, species_id) %>% 
+  summarise(n=n()) %>% 
+  ggplot(aes(x=year, y=n, group=species_id, color=species_id))+
+  geom_line()+
+  geom_point(shape=1)+ #shape refers to the points on the graph
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  labs(title = "Number of samples for species DM",
+       x = "Year",
+       fill = "n")
+```
+We have two separate lines, and they are also colored by the same variable. Note the years are broken up in increments of 5... If we look at the deserts data, we see that 'year' is treated as a numeric... but, is year really a numeric? Would you sum these across? No! Years are actually *factors*. Once you reassign the data type to a factor, now all the years show up and you can easily see each annual observation.
+
 ## Histograms
 Histograms are frequently used by biologists; they show the distribution of continuous variables. As students, you almost certainly have seen histograms of grade distributions. Without getting into the statistics, a histogram `bins` the data and you specify the number of bins that encompass a range of observations. For something like grades, this is easy because the number of bins corresponds to the grades A-F. By default, R uses a formula to calculate the number of bins but some adjustment is often required.  
+
+In practice, we probably shouldn't change the number of bins unless the graph starts getting funky.
 
 What does the distribution of body mass look like in the `homerange` data?
 ```{r}
 homerange %>% 
   ggplot(aes(x = log10.mass)) +
-  geom_histogram(alpha = 0.6, color = "black", fill = "deeppink4", bins=40)+
+  geom_histogram(alpha = 0.6, color = "black", fill = "deepskyblue4", bins=40)+
   labs(title = "Distribution of Body Mass")
 ```
+Note, each bar is a bin and has a black line across it to make it "pop"! The `color = ` changes the color of the outline of the bar (they can be black, grey, or not there!). `Alpha = ` refers to transparency. The current alpha is set to 0.6... if setting to 0.9, it makes the plot a lot darker. It's preferable to keep it a little transparent so your readers can see the measurements behind the graph.
 
 Let's play with the colors. This shows all 657 of R's built-in colors. Notice that `color` and `fill` do different things!
 ```{r}
-#grDevices::colors()
+#grDevices::colors() #wow! so many colors...
 ```
 
 ## Density plots  
@@ -113,6 +129,14 @@ homerange %>%
 ```
 
 I like to see both the histogram and the density curve so I often plot them together. Note that I assign the density plot a different color.
+```{r}
+homerange %>% 
+  ggplot(aes(x=log10.mass)) +
+  geom_histogram(aes(y = ..density..), fill = "steelblue", alpha = 0.8, color = "black")+
+  geom_density(color = "red")+
+  labs(title = "Distribution of Body Mass")
+```
+
 ```{r message=FALSE}
 homerange %>% 
   ggplot(aes(x=log10.mass)) +
@@ -124,24 +148,38 @@ homerange %>%
 ## Practice
 1. Make a histogram of `log10.hra`. Make sure to add a title.
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x = log10.hra)) +
+  geom_histogram(alpha = 0.6, color = "black", fill = "steelblue")+
+  labs(title = "Distribution of Homerange")
 ```
+You can play around with the bin number here. But, typically it's okay to leave it as is unless we know something about the data that would make the graph better.
 
 2. Now plot the same variable using `geom_density()`.
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x = log10.hra)) +
+  geom_density(fill="steelblue", alpha  =0.6, color = "black")+
+  labs(title = "Distribution of Homerange")
 ```
 
 3. Combine them both!
 ```{r}
-
+homerange %>% 
+  ggplot(aes(x=log10.hra)) +
+  geom_histogram(aes(y = ..density..), fill = "steelblue", alpha = 0.8, color = "black")+
+  geom_density(color = "red")+
+  labs(title = "Distribution of Homerange")
 ```
 
 ## Create Categories with mutate and case_when()
 `case_when()` is a very handy function from `dplyr` which allows us to calculate a new variable from other variables. We use `case_when()` within `mutate()` to do this.`case_when()` allows us to specify multiple conditions. Let's reclassify the body mass variable into a new factor variable with small, medium, and large animals. 
 ```{r}
-#glimpse(homerange)
+glimpse(homerange)
 ```
+Notice that a lot of these characters are continuous... but, what if we want to make the continuous variables into categorical variables? We can't just compile them all into categorical values unless the data type is very close.
+
+For example, with a variety of heights, you want to break them up into "short", "medium", and "tall". You should make clean breaks on a continuous variable.
 
 ```{r}
 homerange %>% 
@@ -150,19 +188,26 @@ homerange %>%
             max=max(log10.mass))
 ```
 
+The range is quite high! How would you break this up?
+```{r}
+summary(homerange$log10.mass)
+```
+Notice that this gives you a lot of information. We can use this to create our "breaks".
+
 ```{r}
 homerange <- homerange %>% 
              mutate(mass_category = case_when(log10.mass <= 1.75 ~ "small",
                                               log10.mass > 1.75 & log10.mass <= 2.75 ~ "medium",
                                               log10.mass > 2.75 ~ "large"))
+glimpse(homerange)
 ```
+In the homerange data, we are mutating (adding a new column) called mass_category with three categories: small, medium, and large. We are turning a continuous variable into categorical variables. We will use the `case_when()` to categorize the different values.
 
 Here we check how the newly created body mass categories compare across `trophic.guild`. 
 ```{r}
 homerange %>% 
   ggplot(aes(x = mass_category, fill = trophic.guild)) +
-  geom_bar() +
-  coord_flip() +
+  geom_bar(position = "dodge") +
   labs(title = "Observations by Taxon and Mass Category in Homerange Data",
        x = "Mass Category",
        fill = "Trophic Guild")
@@ -171,25 +216,47 @@ homerange %>%
 ## Practice
 1. Use case_when() to make a new column `range_category` that breaks down `log10.hra` into very small, small, medium, and large classes based on quartile.
 ```{r}
-
+summary(homerange$log10.hra)
 ```
 
 ```{r}
+library(gtools)
+quartiles <- quantcut(homerange$log10.hra)
+table(quartiles)
+```
+Wow! What an easy-to-use way to get quartiles when breaking something down.
 
+```{r}
+homerange <- homerange %>% 
+  mutate(range_category = case_when(log10.hra < 3.65 ~ "very small",
+                                    log10.hra >= 3.65 & log10.hra < 4.59 ~ "small",
+                                    log10.hra >= 4.59 & log10.hra < 6.02 ~ "medium",
+                                    log10.hra >= 6.02 ~ "large"))
 ```
 
 ```{r}
-
+glimpse(homerange)
 ```
+
 
 2. How many and which taxonomic classes are represented in each of the `range_category` classes?
 ```{r}
-
+homerange %>%
+  group_by(range_category, taxon) %>% 
+  summarise(n_obs = n(), .groups = "keep")
+```
+```{r}
+homerange %>% 
+  ggplot(aes(x = range_category, fill = class)) +
+  geom_bar(position = "dodge")
 ```
 
 3. Isolate the small `range_category` and plot the range of `log10.mass` by taxonomic class.
 ```{r}
-
+homerange %>% 
+  filter(range_category == "small") %>% 
+  ggplot(aes(x = class, y = log10.mass, fill = class)) +
+  geom_boxplot(alpha = 0.6)
 ```
 
 ## That's it! Take a break and I will see you on Zoom!  
