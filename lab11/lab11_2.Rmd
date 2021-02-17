@@ -184,7 +184,6 @@ homerange %>%
   geom_point() +
   xlim(0, 4) + #zoom in between 0 and 4
   ylim(1, 6) + # zoom in between 1 and 6 
-  
 ```
 
 ## Practice

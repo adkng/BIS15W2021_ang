@@ -17,6 +17,8 @@ library(dplyr)
 library(janitor)
 library(skimr)
 library(dataMaid)
+library(naniar)
+library(visdat)
 ```
 
 Get your data imported.
@@ -220,6 +222,7 @@ video_game_sales %>%
   filter(critic_score >= 80, genre == "Role-Playing") %>% 
   arrange(critic_score)
 ```
+
 See that `arrange()` function we used? That sorted our search for role-playing games that critics scored at least 80 to show us the games in ascending order. We can also do descending order by using `arrange(desc())`.
 ```{r}
 video_game_sales %>%
@@ -364,5 +367,89 @@ Everybody loves Valve!
 
 ## `N_distinct()` and `N_levels()`
 `n_distinct()` is for ______, but `n_levels()` is for _______.
+
+## NA's
+NAs. Data you (most likely) can't work with when you're performing your analyses. Depending on the scientist, these can take many forms *and* meanings. In one data set, a `-999.00` or a `0` could mean `NA`. In another data set, it could be just `NA`. Their meanings could range from "we didn't observe this" to "x really doesn't apply to y".
+
+The best approach to taking care of these is to look through your data, figure out how they are represented, and where they are located to best determine how you want to take care of them.
+
+### Looking for NAs
+The `summary()` function in base R will tally NA's by variable, but *only* for categorical/factor, numeric, integer, or logical columns.
+
+`is.na()` is a function that determines whether a value in a data frame is or is not an NA. This is evaluated as TRUE or FALSE. This means that R is looking in the data for NA, not for any values that might represent NA. To R, and NA is an empty cell or spot in a vector. Beware, this only returns NAs as **R** sees them, so if your scientist has some funky representation (say... `-999.00`), R won't really pick up on this.
+
+`any_NA()` is equally helpful, but only if you want a flat out "yes" or "no" to the question "are there NAs?"
+
+You can use the `summarise()` function to look for number of NAs in your data!
+```{r}
+msleep %>% 
+  summarise(number_nas = sum(is.na(msleep)))
+```
+
+
+The `purrr` library has a handy function known as `map_df()` that can create a dataframe counting all the NAs in your original dataframe.
+```{r}
+msleep %>%
+  purrr::map_df(~ sum(is.na(.))) %>% 
+  pivot_longer(everything(),
+    names_to= "variables",
+    values_to = "num_nas") %>% 
+  arrange(desc(num_nas))
+```
+
+The `count()` function is also good for exploring NAs in a specific variable.
+```{r}
+msleep %>% 
+  count(conservation, sort = TRUE)
+```
+
+It is true that all of this is redundant, but you want to be able to run multiple checks on the data. **Remember, just because your code runs without errors doesn't mean it is doing what you intended.** 
+
+### Replacing values with NA
+If you know what NAs look like in your data, you can tell R about them as you load it in!
+```{r}
+life_history_advance <- 
+  readr::read_csv(file = "data/mammal_lifehistories_v3.csv", 
+                  na = c("NA", " ", ".", "-999"))
+```
+
+```{r}
+amniota <- readr::read_csv("data/amniota.csv")
+amniota_tidy <- amniota %>% # we make a new data frame to show transparency
+  na_if("-999")
+```
+
+In addition, you can change existing values to NAs.
+```{r}
+msleep %>%  
+  mutate(conservation_modified = na_if(conservation, "domesticated"))%>% #conservation_modified is the name of the new column... important to not replace the existing column!
+  count(conservation_modified, sort = T) #previously there were only 29 NA's
+```
+
+## Using libraries to deal with NAs: Introducing `naniar`
+
+`naniar` is a package meant to deal with NAs.
+
+The `miss_var_summary()` function provides a clean summary of NAs across the data frame.
+```{r}
+naniar::miss_var_summary(msleep)
+```
+But beware, it is the same thing with other functions like `is.na()`: it will only work on things that R can interpret as `NA`. It is **not** going to pick up on things like `-999.00`.
+
+You can use `miss_var_summary()` with `group_by` for an even more specific look at where your NAs are.
+```{r}
+msleep %>%
+  group_by(vore) %>%
+  select(sleep_cycle, vore) %>% 
+  miss_var_summary()
+```
+We are missing sleep cycle data for a lot of herbivores.
+
+`naniar` also comes with a replace function that works to turn certain things into NAs as you load your data in, similar to our solution from earlier.
+```{r}
+#life_history %>% 
+  #naniar::replace_with_na(replace = list(newborn = "not measured", weaning= -999, wean_mass= -999, afr= #-999, max_life= 0, litter_size= -999, gestation= -999, mass= -999)) %>% 
+  #naniar::miss_var_summary()
+```
 
 ### End ###

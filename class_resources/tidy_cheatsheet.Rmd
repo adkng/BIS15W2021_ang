@@ -1,0 +1,65 @@
+---
+title: "tidy_cheatsheet"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+## Load your libraries
+```{r}
+library(tidyverse)
+library(here)
+library(readr)
+```
+
+## What is `Tidy` data?
+`Tidy` data in the sense of the tidyverse follows three conventions:   
+(1) each variable has its own column  
+(2) each observation has its own row  
+(3) each value has its own cell 
+
+## `pivot_longer()`
+
+Rules:  
++ `pivot_longer`(cols, names_to, values_to)
++ `cols` - Columns to pivot to longer format
++ `names_to` - Name of the new column; it will contain the column names of gathered columns as values
++ `values_to` - Name of the new column; it will contain the data stored in the values of gathered columns
+
+You'll want to use this when you see "wide data", because column names may actually represent values of a variable (and that goes agianst our handy `Tidy` rules!)
+
+```{r}
+relig_income <- read_csv(here("class_resources", "data", "relig_income.csv"))
+relig_income %>% 
+    pivot_longer(-religion,
+               names_to = "income_bracket",
+               values_to = "num_households")
+```
+
+Sometimes, there might even be two observations in a column name... yikes. Use the `names_sep =` command under the `pivot_longer()` function to specify how you want R to split them up.
+```{r}
+qpcr_untidy <- read_csv("data/qpcr_untidy.csv")
+qpcr_untidy %>% 
+  pivot_longer(exp1_rep1:exp3_rep3,
+    names_to= c("experiment", "replicate"),
+    names_sep="_",
+    values_to="mRNA_expression")
+```
+
+You can also use the `separate()` function for means to a similar end. The `unite()` function works the exact same way, only it mushes back whatever you separated (or however you decide you want to mush them together with).
+
+## `pivot_wider()`
+The opposite of `pivot_longer()`. You use `pivot_wider()` when you have an observation scattered across multiple rows.
+Rules:  
++ `pivot_wider`(names_from, values_from)  
++ `names_from` - Values in the `names_from` column will become new column names  
++ `values_from` - Cell values will be taken from the `values_from` column  
+
+```{r}
+tb_data <- read_csv("data/tb_data.csv")
+tb_data %>% 
+  pivot_wider(names_from = "key", #the observations under key will become new columns
+              values_from = "value")
+```
+
+**Labs 8.1 and 8.2** have other wonderful examples of data you can pivot with to your heart's content.
