@@ -51,7 +51,8 @@ spiders <- read_csv(here("lab12", "data", "spiders_with_locs.csv")) %>%
 
 There is an error in one of the coordinates that we will fix here.
 ```{r}
-spiders <- spiders %>% filter(latitude<=42)
+spiders <- spiders %>% 
+  filter(latitude<=42)
 ```
 
 ## Create Base Map
