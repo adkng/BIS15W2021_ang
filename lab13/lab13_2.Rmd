@@ -32,11 +32,14 @@ library("tidyverse")
 library("shiny")
 library("naniar")
 library("shinydashboard")
+library(palmerpenguins)
 ```
 
 ```{r}
 if (!require("tidyverse")) install.packages('tidyverse')
 ```
+You can add this to your standalone app! If you type require and "janitor", it will do the same thing as library()... but if you use it as apart of an `if statement`, then it will install the thing for them if needed. This is good for people who are not often working in R!
+
 
 ## Running A Shiny App from Script
 Copy and pasting code into the console is okay for tiny example apps, but it's not feasible for large apps, especially because advanced shiny apps can be hundreds of line of code or more. The best way to work on apps is from a stand alone script. R Studio should automatically recognize the shiny app from the basic app building blocks/skeleton. All we have to do to run our app is click the "Run App" button at the top right of the editor window.  
@@ -65,7 +68,7 @@ ui <- fluidPage(
     )
 
 server <- function(input, output, session) {
-  session$onSessionEnded(stopApp)
+  session$onSessionEnded(stopApp) # how to make sure your app stops running when you say so (and it's not in the background)
   output$taxonPlot <- renderPlot({
     homerange %>% 
     filter(taxon == input$taxon) %>% 
@@ -78,21 +81,23 @@ shinyApp(ui, server)
 ```
 
 ## Adding Numeric Input
-Let's try adding a new numeric input so the user can change the size of the font on the plot with a slider. We can do this with the `sliderInput()` function. The `sliderInput()` function takes a label that the server function will use to access the value, the label that the ui will display to the user, a minimum and maximum value, a starting value, and a step size. Edit the script to include the slider input in the ui and for the server to access the input value.
+Let's try adding a new numeric input so the *user can change the size of the font on the plot with a slider*. We can do this with the `sliderInput()` function. The `sliderInput()` function takes a label that the server function will use to access the value, the label that the ui will display to the user, a minimum and maximum value, a starting value, and a step size. Edit the script to include the slider input in the ui and for the server to access the input value.
 ```{r, eval=F, echo=T}
 ui <- fluidPage(
     selectInput("x", "Select X Variable", choices = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"),
               selected = "bill_length_mm"),
     selectInput("y", "Select Y Variable", choices = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"),
               selected = "bill_depth_mm"),
-    sliderInput("fontsize", "Select the Font Size", min = 10, max = 24, value = 18, step = 1),
+    sliderInput("fontsize", "Select the Font Size", min = 10, max = 24, value = 18, step = 1), # here is the slider!
     plotOutput("plot", width = "500px", height = "400px")
 )
 
 server <- function(input, output, session) {
   session$onSessionEnded(stopApp)
   output$plot <- renderPlot({
-  ggplot(penguins, aes_string(x = input$x, y = input$y, color="species")) + geom_point() + theme_light(base_size = input$fontsize)
+  ggplot(penguins, aes_string(x = input$x, y = input$y, color="species")) + 
+      geom_point() + 
+      theme_light(base_size = input$fontsize) #make sure you mention that text sliding!
   })
 }
 
@@ -110,7 +115,7 @@ When working with any package on shiny ui appearance, it's important to know how
 We won't use `fluidPage()` with `shinydashboard` but rather `dashboardPage()`. A shiny dashboard contains a minimum of a header, a sidebar, and a body. The `dashboardPage()` still contains the bootstrap grid.  
 ```{r}
 library(shinydashboard)
-
+# note, your app must have these things! it creates a pretty place to drop all the things you built
 ui <- dashboardPage(
   dashboardHeader(),
   dashboardSidebar(),
@@ -149,7 +154,9 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) { 
   output$plot <- renderPlot({
-  ggplot(penguins, aes_string(x = input$x, y = input$y, color="species")) + geom_point() + theme_light()
+  ggplot(penguins, aes_string(x = input$x, y = input$y, color="species")) + 
+      geom_point() + 
+      theme_light()
   })
   session$onSessionEnded(stopApp)
   }
@@ -235,6 +242,11 @@ names(gabon)
 glimpse(gabon)
 ```
 
+```{r}
+summary(gabon)
+```
+
+
 2. Build an app that re-creates the plots shown on page 810 of this paper. It compares the relative abundance % to the distance from villages in rural Gabon. Use shiny dashboard and add aesthetics to the plot.  
 ```{r}
 ui <- dashboardPage(
@@ -271,6 +283,18 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+
+
+
+```{r}
+fruits <- c("one apple", "two pears", "three bananas")
+str_replace(fruits, "[aeiou]", "-")
+str_replace_all(fruits, "[aeiou]", "-")
+str_replace_all(fruits, "[aeiou]", toupper)
+str_replace_all(fruits, "b", NA_character_)
+```
+
+
 
 ## That's it, let's take a break!   
 
