@@ -1,7 +1,7 @@
 ---
 title: "Lab 13 Homework"
 author: "Please Add Your Name Here"
-date: "2021-03-01"
+date: "2021-03-02"
 output:
   html_document: 
     theme: spacelab
@@ -316,7 +316,6 @@ server <- function(input, output, session) {
   
   output$plot <- renderPlot({
   uc_admit_perc %>%
-  filter(ethnicity == input$filter) %>% 
   ggplot(aes_string(x = input$x, y = "filtered_count_fr", fill = "campus")) +
   scale_fill_brewer(palette = "Paired") +
   geom_col(position = "dodge") + 
@@ -344,11 +343,8 @@ ui <- dashboardPage(skin = "black",
   dashboardBody(
   fluidRow(
   box(title = "Plot Options", width = 3,
-  selectInput("category", "Select Admission Category", choices = c("Applicants", "Admits", "Enrollees"), 
-              selected = "Applicants"),
-  selectInput("ethnicity", "Select Ethnicity", choices = c("All", "African American", "American Indian", "Asian", "Chicano/Latino", "International", "White", "Unknown"), selected = "All"),
-  selectInput("campus", "Select Campus", choices = c("Berkeley", "Davis", "Irvine", "Los_Angeles", "Merced", "Riverside", "San_Diego", "Santa_Barbara", "Santa_Cruz"), selected = "Davis"),
-  selectInput("academic_yr", "Select Year", choices = c("2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019"), selected = "2010"),
+  selectInput("x", "Select Admission Criteria", choices = c("academic_yr", "campus", "category"), 
+              selected = "academic_yr"),
       hr(),
       helpText("Reference: University of California Information Center, Admissions (2010-2019)")
   ), # close the first box
@@ -363,13 +359,12 @@ server <- function(input, output, session) {
   
   output$plot <- renderPlot({
   uc_admit_perc %>%
-  filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category, academic_yr == input$academic_yr) %>% 
-  ggplot(aes_string(x = "academic_yr", y = "filtered_count_fr")) +
+  ggplot(aes_string(x = "ethnicity", y = "filtered_count_fr", fill = input$x)) +
   scale_fill_brewer(palette = "Paired") +
   geom_col(position = "dodge") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme_minimal() +
-  labs(y = "Number of Individuals")
+  labs(y = "Number of Admitted Freshmen")
   })
   
   # stop the app when we close it

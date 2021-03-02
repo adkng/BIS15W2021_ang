@@ -26,7 +26,6 @@ ui <- dashboardPage(skin = "black",
                         box(title = "Plot Options", width = 3,
                             selectInput("x", "Select Admission Criteria", choices = c("academic_yr", "campus", "category"), 
                                         selected = "academic_yr"),
-                            selectInput("filter", "Select Ethnicity", choices = c("All", "African American", "American Indian", "Asian", "Chicano/Latino", "International", "White", "Unknown"), selected = "All"),
                             hr(),
                             helpText("Reference: University of California Information Center, Admissions (2010-2019)")
                         ), # close the first box
@@ -41,8 +40,7 @@ server <- function(input, output, session) {
   
   output$plot <- renderPlot({
     uc_admit_perc %>%
-      filter(ethnicity == input$filter) %>% 
-      ggplot(aes_string(x = input$x, y = "filtered_count_fr", fill = "campus")) +
+      ggplot(aes_string(x = "ethnicity", y = "filtered_count_fr", fill = input$x)) +
       scale_fill_brewer(palette = "Paired") +
       geom_col(position = "dodge") + 
       theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
