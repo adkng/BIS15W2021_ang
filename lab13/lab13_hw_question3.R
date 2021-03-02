@@ -24,14 +24,12 @@ ui <- dashboardPage(skin = "black",
                     dashboardBody(
                       fluidRow(
                         box(title = "Plot Options", width = 3,
-                            selectInput("category", "Select Admission Category", choices = c("Applicants", "Admits", "Enrollees"), 
-                                        selected = "Applicants"),
-                            selectInput("ethnicity", "Select Ethnicity", choices = c("All", "African American", "American Indian", "Asian", "Chicano/Latino", "International", "White", "Unknown"), selected = "All"),
-                            selectInput("campus", "Select Campus", choices = c("Berkeley", "Davis", "Irvine", "Los_Angeles", "Merced", "Riverside", "San_Diego", "Santa_Barbara", "Santa_Cruz"), selected = "Davis"),
+                            selectInput("x", "Select Admission Criteria", choices = c("ethnicity", "campus", "category"), 
+                                        selected = "academic_yr"),
                             hr(),
                             helpText("Reference: University of California Information Center, Admissions (2010-2019)")
                         ), # close the first box
-                        box(title = "Admissions by Ethnicity", width = 6,
+                        box(title = "Admissions by Year", width = 6,
                             plotOutput("plot", width = "600px", height = "500px")
                         ) # close the second box
                       ) # close the row
@@ -42,13 +40,14 @@ server <- function(input, output, session) {
   
   output$plot <- renderPlot({
     uc_admit_perc %>%
-      filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category) %>% 
-      ggplot(aes_string(x = "academic_yr", y = "filtered_count_fr")) +
+      #filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category) %>% 
+      ggplot(aes_string(x = "academic_yr", y = "filtered_count_fr", fill = input$x)) +
       scale_fill_brewer(palette = "Paired") +
       geom_col(position = "dodge") + 
       theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
       theme_minimal() +
-      labs(y = "Number of Individuals")
+      labs(y = "Number of Individuals",
+           x = "Academic Year")
   })
   
   # stop the app when we close it

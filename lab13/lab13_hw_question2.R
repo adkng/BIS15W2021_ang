@@ -45,7 +45,8 @@ server <- function(input, output, session) {
       geom_col(position = "dodge") + 
       theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
       theme_minimal() +
-      labs(y = "Number of Admitted Freshmen")
+      labs(y = "Number of Individuals",
+           x = "Ethnicity")
   })
   
   # stop the app when we close it

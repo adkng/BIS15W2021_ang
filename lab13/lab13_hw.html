@@ -332,65 +332,6 @@ uc_admit_perc</code></pre>
   ggplot(aes(x = academic_yr, y = filtered_count_fr, fill = campus)) +
   geom_col(position = &quot;dodge&quot;)</code></pre>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>#Attempt 1</p>
-<pre class="r"><code>library(shiny)
-
-ui &lt;- fluidPage(
-  selectInput(&quot;x&quot;, &quot;Select X Variable&quot;, choices = c(&quot;academic_yr&quot;, &quot;campus&quot;, &quot;category&quot;), selected = &quot;academic_yr&quot;),
-  plotOutput(&quot;plot&quot;, width = &quot;800px&quot;, height = &quot;400px&quot;)
-)
-
-server &lt;- function(input, output, session) {
-  output$plot &lt;- renderPlot({
-  ggplot(uc_admit_perc, aes_string(x = input$x, y = &quot;filtered_count_fr&quot;, fill = &quot;ethnicity&quot;)) + 
-      geom_col(position = &quot;dodge&quot;) + 
-      theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-      theme_minimal()
-  })
-  session$onSessionEnded(stopApp)
-}
-
-shinyApp(ui, server)</code></pre>
-<p><div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div></p>
-<p>#Attempt 2</p>
-<pre class="r"><code>ui &lt;- dashboardPage(skin = &quot;black&quot;,
-  dashboardHeader(title = &quot;University of California Admissions from 2010 - 2019&quot;,
-                  titleWidth = 600),
-  dashboardSidebar(disable = T),
-  dashboardBody(
-  fluidRow(
-  box(title = &quot;Plot Options&quot;, width = 3,
-  selectInput(&quot;x&quot;, &quot;Select Admission Criteria&quot;, choices = c(&quot;academic_yr&quot;, &quot;campus&quot;, &quot;category&quot;), 
-              selected = &quot;academic_yr&quot;),
-  selectInput(&quot;filter&quot;, &quot;Select Ethnicity&quot;, choices = c(&quot;All&quot;, &quot;African American&quot;, &quot;American Indian&quot;, &quot;Asian&quot;, &quot;Chicano/Latino&quot;, &quot;International&quot;, &quot;White&quot;, &quot;Unknown&quot;), selected = &quot;All&quot;),
-      hr(),
-      helpText(&quot;Reference: University of California Information Center, Admissions (2010-2019)&quot;)
-  ), # close the first box
-  box(title = &quot;Admissions by Ethnicity&quot;, width = 6,
-  plotOutput(&quot;plot&quot;, width = &quot;600px&quot;, height = &quot;500px&quot;)
-  ) # close the second box
-  ) # close the row
-  ) # close the dashboard body
-) # close the ui
-
-server &lt;- function(input, output, session) { 
-  
-  output$plot &lt;- renderPlot({
-  uc_admit_perc %&gt;%
-  ggplot(aes_string(x = input$x, y = &quot;filtered_count_fr&quot;, fill = &quot;campus&quot;)) +
-  scale_fill_brewer(palette = &quot;Paired&quot;) +
-  geom_col(position = &quot;dodge&quot;) + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  theme_minimal() +
-  labs(y = &quot;Number of Admitted Freshmen&quot;)
-  })
-  
-  # stop the app when we close it
-  session$onSessionEnded(stopApp)
-  }
-
-shinyApp(ui, server)</code></pre>
-<p><div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div></p>
 <p>Attempt #3</p>
 <pre class="r"><code>ui &lt;- dashboardPage(skin = &quot;black&quot;,
   dashboardHeader(title = &quot;University of California Admissions from 2010 - 2019&quot;,
@@ -420,7 +361,8 @@ server &lt;- function(input, output, session) {
   geom_col(position = &quot;dodge&quot;) + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme_minimal() +
-  labs(y = &quot;Number of Admitted Freshmen&quot;)
+  labs(y = &quot;Number of Individuals&quot;,
+       x = &quot;Ethnicity&quot;)
   })
   
   # stop the app when we close it
@@ -437,14 +379,12 @@ shinyApp(ui, server)</code></pre>
   dashboardBody(
   fluidRow(
   box(title = &quot;Plot Options&quot;, width = 3,
-  selectInput(&quot;category&quot;, &quot;Select Admission Category&quot;, choices = c(&quot;Applicants&quot;, &quot;Admits&quot;, &quot;Enrollees&quot;), 
-              selected = &quot;Applicants&quot;),
-  selectInput(&quot;ethnicity&quot;, &quot;Select Ethnicity&quot;, choices = c(&quot;All&quot;, &quot;African American&quot;, &quot;American Indian&quot;, &quot;Asian&quot;, &quot;Chicano/Latino&quot;, &quot;International&quot;, &quot;White&quot;, &quot;Unknown&quot;), selected = &quot;All&quot;),
-  selectInput(&quot;campus&quot;, &quot;Select Campus&quot;, choices = c(&quot;Berkeley&quot;, &quot;Davis&quot;, &quot;Irvine&quot;, &quot;Los_Angeles&quot;, &quot;Merced&quot;, &quot;Riverside&quot;, &quot;San_Diego&quot;, &quot;Santa_Barbara&quot;, &quot;Santa_Cruz&quot;), selected = &quot;Davis&quot;),
+  selectInput(&quot;x&quot;, &quot;Select Admission Criteria&quot;, choices = c(&quot;ethnicity&quot;, &quot;campus&quot;, &quot;category&quot;), 
+              selected = &quot;academic_yr&quot;),
       hr(),
       helpText(&quot;Reference: University of California Information Center, Admissions (2010-2019)&quot;)
   ), # close the first box
-  box(title = &quot;Admissions by Ethnicity&quot;, width = 6,
+  box(title = &quot;Admissions by Year&quot;, width = 6,
   plotOutput(&quot;plot&quot;, width = &quot;600px&quot;, height = &quot;500px&quot;)
   ) # close the second box
   ) # close the row
@@ -455,13 +395,14 @@ server &lt;- function(input, output, session) {
   
   output$plot &lt;- renderPlot({
   uc_admit_perc %&gt;%
-  filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category) %&gt;% 
-  ggplot(aes_string(x = &quot;academic_yr&quot;, y = &quot;filtered_count_fr&quot;)) +
+  #filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category) %&gt;% 
+  ggplot(aes_string(x = &quot;academic_yr&quot;, y = &quot;filtered_count_fr&quot;, fill = input$x)) +
   scale_fill_brewer(palette = &quot;Paired&quot;) +
   geom_col(position = &quot;dodge&quot;) + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme_minimal() +
-  labs(y = &quot;Number of Individuals&quot;)
+  labs(y = &quot;Number of Individuals&quot;,
+       x = &quot;Academic Year&quot;)
   })
   
   # stop the app when we close it

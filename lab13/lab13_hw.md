@@ -263,76 +263,6 @@ uc_admit_perc %>%
 
 ![](lab13_hw_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
-
-#Attempt 1
-
-```r
-library(shiny)
-
-ui <- fluidPage(
-  selectInput("x", "Select X Variable", choices = c("academic_yr", "campus", "category"), selected = "academic_yr"),
-  plotOutput("plot", width = "800px", height = "400px")
-)
-
-server <- function(input, output, session) {
-  output$plot <- renderPlot({
-  ggplot(uc_admit_perc, aes_string(x = input$x, y = "filtered_count_fr", fill = "ethnicity")) + 
-      geom_col(position = "dodge") + 
-      theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-      theme_minimal()
-  })
-  session$onSessionEnded(stopApp)
-}
-
-shinyApp(ui, server)
-```
-
-`<div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div>`{=html}
-
-#Attempt 2
-
-```r
-ui <- dashboardPage(skin = "black",
-  dashboardHeader(title = "University of California Admissions from 2010 - 2019",
-                  titleWidth = 600),
-  dashboardSidebar(disable = T),
-  dashboardBody(
-  fluidRow(
-  box(title = "Plot Options", width = 3,
-  selectInput("x", "Select Admission Criteria", choices = c("academic_yr", "campus", "category"), 
-              selected = "academic_yr"),
-  selectInput("filter", "Select Ethnicity", choices = c("All", "African American", "American Indian", "Asian", "Chicano/Latino", "International", "White", "Unknown"), selected = "All"),
-      hr(),
-      helpText("Reference: University of California Information Center, Admissions (2010-2019)")
-  ), # close the first box
-  box(title = "Admissions by Ethnicity", width = 6,
-  plotOutput("plot", width = "600px", height = "500px")
-  ) # close the second box
-  ) # close the row
-  ) # close the dashboard body
-) # close the ui
-
-server <- function(input, output, session) { 
-  
-  output$plot <- renderPlot({
-  uc_admit_perc %>%
-  ggplot(aes_string(x = input$x, y = "filtered_count_fr", fill = "campus")) +
-  scale_fill_brewer(palette = "Paired") +
-  geom_col(position = "dodge") + 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  theme_minimal() +
-  labs(y = "Number of Admitted Freshmen")
-  })
-  
-  # stop the app when we close it
-  session$onSessionEnded(stopApp)
-  }
-
-shinyApp(ui, server)
-```
-
-`<div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div>`{=html}
-
 Attempt #3
 
 ```r
@@ -364,7 +294,8 @@ server <- function(input, output, session) {
   geom_col(position = "dodge") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme_minimal() +
-  labs(y = "Number of Admitted Freshmen")
+  labs(y = "Number of Individuals",
+       x = "Ethnicity")
   })
   
   # stop the app when we close it
@@ -388,14 +319,12 @@ ui <- dashboardPage(skin = "black",
   dashboardBody(
   fluidRow(
   box(title = "Plot Options", width = 3,
-  selectInput("category", "Select Admission Category", choices = c("Applicants", "Admits", "Enrollees"), 
-              selected = "Applicants"),
-  selectInput("ethnicity", "Select Ethnicity", choices = c("All", "African American", "American Indian", "Asian", "Chicano/Latino", "International", "White", "Unknown"), selected = "All"),
-  selectInput("campus", "Select Campus", choices = c("Berkeley", "Davis", "Irvine", "Los_Angeles", "Merced", "Riverside", "San_Diego", "Santa_Barbara", "Santa_Cruz"), selected = "Davis"),
+  selectInput("x", "Select Admission Criteria", choices = c("ethnicity", "campus", "category"), 
+              selected = "academic_yr"),
       hr(),
       helpText("Reference: University of California Information Center, Admissions (2010-2019)")
   ), # close the first box
-  box(title = "Admissions by Ethnicity", width = 6,
+  box(title = "Admissions by Year", width = 6,
   plotOutput("plot", width = "600px", height = "500px")
   ) # close the second box
   ) # close the row
@@ -406,13 +335,14 @@ server <- function(input, output, session) {
   
   output$plot <- renderPlot({
   uc_admit_perc %>%
-  filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category) %>% 
-  ggplot(aes_string(x = "academic_yr", y = "filtered_count_fr")) +
+  #filter(campus == input$campus, ethnicity == input$ethnicity, category == input$category) %>% 
+  ggplot(aes_string(x = "academic_yr", y = "filtered_count_fr", fill = input$x)) +
   scale_fill_brewer(palette = "Paired") +
   geom_col(position = "dodge") + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   theme_minimal() +
-  labs(y = "Number of Individuals")
+  labs(y = "Number of Individuals",
+       x = "Academic Year")
   })
   
   # stop the app when we close it
